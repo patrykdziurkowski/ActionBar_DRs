@@ -8,7 +8,7 @@ function DrTracker:AddDr(unitGUID, category, ccDuration)
         local categories = DrList:GetCategories()
         local template =  {}
         for category, _ in pairs(categories) do
-            template[category] = { level = 0, expirationTime = nil}
+            template[category] = { level = 0, expirationTime = 0}
         end
 
         self.unitDRs[unitGUID] = template
@@ -36,6 +36,7 @@ function DrTracker:GetDrInfo(unitGUID, spellId)
         remainingDrTime = 0
         level = 0
         DRs[category].level = 0
+        DRs[category].expirationTime = 0
     end
     return level, remainingDrTime
 end

@@ -5,4 +5,6 @@
 ## Version: 0.1
 ## DefaultState: enabled
 
+LibStub/LibStub.lua
+Libs/DRList-1.0/DRList-1.0.xml
 Main.lua

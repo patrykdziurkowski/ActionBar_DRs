@@ -1,6 +1,8 @@
 local DrList = LibStub:GetLibrary("DRList-1.0")
 
--- UNIT DRs
+--[[ 
+    UNIT DRS
+]]--
 local UnitDRs = {}
 
 function UnitDRs:New(o)
@@ -34,10 +36,11 @@ function UnitDRs:Update(category)
 end
 
 
--- DR TRACKER
+--[[ 
+    DR TRACKER
+]]--
 DrTracker = {}
 DrTracker.unitDRs = {}
-
 
 function DrTracker:AddDr(unitGUID, category, ccDuration)
     if self.unitDRs[unitGUID] == nil then

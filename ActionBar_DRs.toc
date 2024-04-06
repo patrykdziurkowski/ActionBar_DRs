@@ -9,4 +9,5 @@ LibStub/LibStub.lua
 Libs/DRList-1.0/DRList-1.0.xml
 
 DrTracker.lua
+FrameManager.lua
 Main.lua

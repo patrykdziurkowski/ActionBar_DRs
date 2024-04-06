@@ -2,23 +2,42 @@ local DrList = LibStub:GetLibrary("DRList-1.0")
 local DrTracker = DrTracker
 local FrameManager = FrameManager
 
+
+local buttons = {}
+C_Timer.After(2, function()
+    for i = 1, 360 do
+        if _G["BT4Button"..i] ~= nil then
+            buttons[i] = _G["BT4Button"..i]
+        end
+    end
+end)
+
+
 local f2 = CreateFrame("Frame")
 f2:RegisterEvent("PLAYER_TARGET_CHANGED")
 f2:SetScript("OnEvent", function(self, event)
-    local spellId = 64044
     local targetGUID = UnitGUID("target")
+
     if targetGUID == nil then
-        FrameManager:HideBorder(_G["BT4Button99"])
+        for i, button in pairs(buttons) do
+            FrameManager:HideBorder(button)
+        end
         return
     end
     
-    local level, appliedTime, remainingDrTime = DrTracker:GetDrInfo(targetGUID, spellId)
-    if level == 0 then 
-        FrameManager:HideBorder(_G["BT4Button99"])
-        return 
+    for i, button in pairs(buttons) do
+        local type, spellId = GetActionInfo(button.id)
+        if type == "spell" then
+            local level, appliedTime, remainingDrTime = DrTracker:GetDrInfo(targetGUID, spellId)
+            if level == 0 then 
+                FrameManager:HideBorder(button)
+            else
+                FrameManager:CreateBorder(button, level, appliedTime, time() + remainingDrTime)
+            end
+        end
     end
-    FrameManager:CreateBorder(_G["BT4Button99"], level, appliedTime, time() + remainingDrTime)
 end)
+
 
 local f = CreateFrame("Frame")
 f:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")

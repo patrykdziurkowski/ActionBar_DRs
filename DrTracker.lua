@@ -58,10 +58,12 @@ end
 
 function DrTracker:GetDrInfo(unitGUID, spellId)
     -- No dr entry means we don't know anything about target's dr, thus assume none
-    if self.unitDRs[unitGUID] == nil then return 0, 0 end
+    if self.unitDRs[unitGUID] == nil then return 0, 0, 0 end
 
     local drs = self.unitDRs[unitGUID]
     local category = DrList:GetCategoryBySpellID(spellId)
+    -- spell is not a cc
+    if category == nil then return 0, 0, 0 end
 
     drs:Update(category)
 

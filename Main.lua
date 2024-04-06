@@ -32,6 +32,7 @@ f:SetScript("OnEvent", function(self, event)
 
             local ccDuration = 4
             --check if target not immune, npc, etc.
+            --different dr durations for knockback etc.
             DrTracker:AddDr(targetGUID, category, ccDuration)
             f2:GetScript("OnEvent")(f2, "PLAYER_TARGET_CHANGED");
         end

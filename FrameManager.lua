@@ -14,7 +14,7 @@ function FrameManager:CreateBorder(button, level, appliedTime, expirationTime)
     --TODO prevent timer overlap
     local expiresIn = expirationTime - time()
     C_Timer.After(expiresIn, function()
-        button.tex:Hide()
+        self:HideBorder(button)
     end)
 end
 

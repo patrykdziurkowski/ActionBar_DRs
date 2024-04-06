@@ -17,3 +17,8 @@ function FrameManager:CreateBorder(button, level, appliedTime, expirationTime)
         button.tex:Hide()
     end)
 end
+
+function FrameManager:HideBorder(button)
+    if button.tex == nil then return end
+    button.tex:Hide()
+end

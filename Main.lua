@@ -51,11 +51,21 @@ f:SetScript("OnEvent", function(self, event)
     if category == nil then return end
 
     if string.sub(targetGUID, 1, 6) ~= "Player" and not DrList:IsPvECategory(category) then return end
-    --check if target not immune, npc, etc.
-    --different dr durations for knockback etc.
 
-    --get ccDuration by checking target for debuff with the same name or spellId
-    local ccDuration = 4
-    DrTracker:AddDr(targetGUID, category, ccDuration)
-    f2:GetScript("OnEvent")(f2, "PLAYER_TARGET_CHANGED");
+    local spellName = GetSpellInfo(spellId)
+    local unit = UnitTokenFromGUID(targetGUID)
+    
+    if unit ~= nil then
+        -- small delay because apparently this code runs before the debuff is available via AuraUtils
+        C_Timer.After(0.01, function()
+            local _, _, _, _, duration = AuraUtil.FindAuraByName(spellName, unit, "HARMFUL")
+            DrTracker:AddDr(targetGUID, category, duration)
+            f2:GetScript("OnEvent")(f2, "PLAYER_TARGET_CHANGED");
+        end)
+    else
+        -- default cc duration if we fail figuring it out exactly
+        local ccDuration = 6
+        DrTracker:AddDr(targetGUID, category, ccDuration)
+        f2:GetScript("OnEvent")(f2, "PLAYER_TARGET_CHANGED");
+    end
 end)

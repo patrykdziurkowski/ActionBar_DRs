@@ -1,6 +1,6 @@
 local DrList = LibStub:GetLibrary("DRList-1.0")
 local DrTracker = DrTracker
-
+local FrameManager = FrameManager
 
 local f2 = CreateFrame("Frame")
 f2:RegisterEvent("PLAYER_TARGET_CHANGED")

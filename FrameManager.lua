@@ -3,13 +3,16 @@
 ]]--
 FrameManager = {}
 function FrameManager:CreateBorder(button, level, appliedTime, expirationTime)
-    button.tex = button:CreateTexture()
-    button.tex:SetDesaturation(1)
-    button.tex:SetDrawLayer("ARTWORK")
-    button.tex:SetPoint("TOPLEFT", button, "TOPLEFT", -3, 3)
-    button.tex:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 4, -3)
-    button.tex:SetAtlas("greatVault-frame-whole")
-    button.tex:SetVertexColor(0.7, 0.7, 0.7, 1)
+    if button.drBorderTexture == nil then
+        button.drBorderTexture = button:CreateTexture()
+        button.drBorderTexture:SetDesaturation(1)
+        button.drBorderTexture:SetDrawLayer("ARTWORK")
+        button.drBorderTexture:SetPoint("TOPLEFT", button, "TOPLEFT", -3, 3)
+        button.drBorderTexture:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 4, -3)
+        button.drBorderTexture:SetAtlas("greatVault-frame-whole")
+        button.drBorderTexture:SetVertexColor(0.7, 0.7, 0.7, 1)
+    end
+    button.drBorderTexture:Show()
 
     --TODO prevent timer overlap
     local expiresIn = expirationTime - time()
@@ -19,6 +22,6 @@ function FrameManager:CreateBorder(button, level, appliedTime, expirationTime)
 end
 
 function FrameManager:HideBorder(button)
-    if button.tex == nil then return end
-    button.tex:Hide()
+    if button.drBorderTexture == nil then return end
+    button.drBorderTexture:Hide()
 end

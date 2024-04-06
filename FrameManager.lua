@@ -10,4 +10,10 @@ function FrameManager:CreateBorder(button, level, appliedTime, expirationTime)
     button.tex:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 4, -3)
     button.tex:SetAtlas("greatVault-frame-whole")
     button.tex:SetVertexColor(0.7, 0.7, 0.7, 1)
+
+    --TODO prevent timer overlap
+    local expiresIn = expirationTime - time()
+    C_Timer.After(expiresIn, function()
+        button.tex:Hide()
+    end)
 end

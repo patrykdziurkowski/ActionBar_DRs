@@ -11,10 +11,11 @@ f:SetScript("OnEvent", function(self, event)
             -- if category is nil then it's not a CC
             if category == nil then return end
 
+            local ccDuration = 4
             --check if target not immune, npc, etc.
-            DrTracker:AddDr(targetGUID, category, 4)
-            local level, remainingDrTime = DrTracker:GetDrInfo(targetGUID, spellId)
-            FrameManager:CreateBorder(_G["BT4Button99"], level, time(), time() + remainingDrTime)
+            DrTracker:AddDr(targetGUID, category, ccDuration)
+            local level, appliedTime, remainingDrTime = DrTracker:GetDrInfo(targetGUID, spellId)
+            FrameManager:CreateBorder(_G["BT4Button99"], level, appliedTime, time() + remainingDrTime)
         end
     end
 end)

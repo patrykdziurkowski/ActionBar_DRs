@@ -12,7 +12,7 @@ function UnitDRs:New(o)
 
     local categories = DrList:GetCategories()
     for category, _ in pairs(categories) do
-        o[category] = { level = 0, expirationTime = 0 }
+        o[category] = { level = 0, appliedTime = 0, expirationTime = 0 }
     end
 
     return o
@@ -21,6 +21,7 @@ end
 function UnitDRs:Refresh(category, expirationTime)
     self:Update(category)
 
+    self[category].appliedTime = time()
     self[category].expirationTime = expirationTime
     if self[category].level < 2 then
         self[category].level = self[category].level + 1
@@ -32,6 +33,7 @@ function UnitDRs:Update(category)
     if remainingDrTime < 0 then
         self[category].level = 0
         self[category].expirationTime = 0
+        self[category].appliedTime = 0
     end
 end
 
@@ -64,7 +66,8 @@ function DrTracker:GetDrInfo(unitGUID, spellId)
     drs:Update(category)
 
     local level = drs[category].level
+    local appliedTime = drs[category].appliedTime
     local remainingDrTime = drs[category].expirationTime - time()
     if remainingDrTime < 0 then remainingDrTime = 0 end
-    return level, remainingDrTime
+    return level, appliedTime, remainingDrTime
 end

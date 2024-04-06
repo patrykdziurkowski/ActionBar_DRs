@@ -50,8 +50,11 @@ f:SetScript("OnEvent", function(self, event)
     local category = DrList:GetCategoryBySpellID(spellId) 
     if category == nil then return end
 
+    if string.sub(targetGUID, 1, 6) ~= "Player" and not DrList:IsPvECategory(category) then return end
     --check if target not immune, npc, etc.
     --different dr durations for knockback etc.
+
+    --get ccDuration by checking target for debuff with the same name or spellId
     local ccDuration = 4
     DrTracker:AddDr(targetGUID, category, ccDuration)
     f2:GetScript("OnEvent")(f2, "PLAYER_TARGET_CHANGED");

@@ -9,13 +9,22 @@ function FrameManager:CreateBorder(button, level, appliedTime, expirationTime)
         button.drBorderTexture:SetDrawLayer("ARTWORK")
         button.drBorderTexture:SetPoint("TOPLEFT", button, "TOPLEFT", -3, 3)
         button.drBorderTexture:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 4, -3)
-        button.drBorderTexture:SetAtlas("greatVault-frame-whole")
+        button.drBorderTexture:SetTexture("interface\\addons\\actionbar_drs\\textures\\lootgreatvault.png")
         button.drBorderTexture:SetVertexColor(0.7, 0.7, 0.7, 1)
     end
     button.drBorderTexture:Show()
 
+    --Cooldown swipe widget
+    local cooldown = CreateFrame("Cooldown", nil, button, "CooldownFrameTemplate")
+    cooldown:SetSwipeTexture("interface\\addons\\actionbar_drs\\textures\\lootgreatvault.png")
+    cooldown:SetDrawEdge(false)
+    cooldown:SetReverse(true)
+    cooldown:SetCooldown(appliedTime, expirationTime - appliedTime)
+    cooldown:SetAllPoints()
+    button.drBorderTexture.cooldown = cooldown
+
     --TODO prevent timer overlap
-    local expiresIn = expirationTime - time()
+    local expiresIn = expirationTime - GetTime()
     C_Timer.After(expiresIn, function()
         self:HideBorder(button)
     end)

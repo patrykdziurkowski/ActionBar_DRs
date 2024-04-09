@@ -85,6 +85,12 @@ function FrameManager:ShowBorders(button, level, appliedTime, expirationTime)
         button.dr = borders
     end
 
+    if button.dr[0].edgeAnimations:IsPlaying() then
+        for i = 0, 2 do
+            button.dr[i].edgeAnimations:Stop()
+            button.dr[i].cooldownAnimations:Stop()
+        end
+    end
 
     for i = 0, 2 do
         local border = button.dr[i]

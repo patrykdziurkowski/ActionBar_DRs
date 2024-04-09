@@ -38,8 +38,10 @@ f:SetScript("OnEvent", function(self, event)
     local spellName = GetSpellInfo(spellId)
     local unit = UnitTokenFromGUID(targetGUID)
     
-    -- default estimated cc duration if we fail figuring it out exactly
+    -- couldn't find unit anywhere in nameplates, party, pets, target, raid, etc.
+    -- https://wowpedia.fandom.com/wiki/API_UnitTokenFromGUID
     if unit == nil then
+        -- default estimated cc duration if we fail figuring it out exactly
         local level = DrTracker:GetDrInfo(targetGUID, spellId)
         local diminishFactor = DrList:GetNextDR(level, category)
         local ccDuration = 6 * diminishFactor
@@ -61,13 +63,12 @@ end)
 function AddOn:UpdateFrames()
     local targetGUID = UnitGUID("target")
 
-    if targetGUID == nil then
-        for _, button in pairs(AddOn.buttons) do
-            FrameManager:HideBorders(button)
-        end
-        return
-    end
+    if targetGUID == nil then self:HideDrIndicators() return end
     
+    self:DisplayDrIndicators(targetGUID)
+end
+
+function AddOn:DisplayDrIndicators(targetGUID)
     for _, button in pairs(AddOn.buttons) do
         local type, spellId = GetActionInfo(button.id)
         if type == "spell" then
@@ -78,5 +79,11 @@ function AddOn:UpdateFrames()
                 FrameManager:ShowBorders(button, level, appliedTime, GetTime() + remainingDrTime)
             end
         end
+    end
+end
+
+function AddOn:HideDrIndicators()
+    for _, button in pairs(AddOn.buttons) do
+        FrameManager:HideBorders(button)
     end
 end

@@ -7,10 +7,12 @@ AddOn.buttons = {}
 C_Timer.After(2, function()
     for i = 1, 360 do
         if _G["BT4Button"..i] ~= nil then
-            AddOn.buttons[i] = _G["BT4Button"..i]
+            table.insert(AddOn.buttons, _G["BT4Button"..i])
         end
     end
 end)
+
+
 
 
 local f2 = CreateFrame("Frame")
@@ -54,27 +56,26 @@ f:SetScript("OnEvent", function(self, event)
         DrTracker:AddDr(targetGUID, category, duration)
         AddOn:UpdateFrames()
     end)
-       
 end)
 
 function AddOn:UpdateFrames()
     local targetGUID = UnitGUID("target")
 
     if targetGUID == nil then
-        for i, button in pairs(AddOn.buttons) do
-            FrameManager:HideBorder(button)
+        for _, button in pairs(AddOn.buttons) do
+            FrameManager:HideBorders(button)
         end
         return
     end
     
-    for i, button in pairs(AddOn.buttons) do
+    for _, button in pairs(AddOn.buttons) do
         local type, spellId = GetActionInfo(button.id)
         if type == "spell" then
             local level, appliedTime, remainingDrTime = DrTracker:GetDrInfo(targetGUID, spellId)
             if level == 0 then 
-                FrameManager:HideBorder(button)
+                FrameManager:HideBorders(button)
             else
-                FrameManager:ShowBorder(button, level, appliedTime, GetTime() + remainingDrTime)
+                FrameManager:ShowBorders(button, level, appliedTime, GetTime() + remainingDrTime)
             end
         end
     end

@@ -48,7 +48,7 @@ function DrTracker:AddDr(unitGUID, category, ccDuration)
     if self.unitDRs[unitGUID] == nil then
         self.unitDRs[unitGUID] = UnitDRs:New()
     end
-
+    
     local drs = self.unitDRs[unitGUID]
     local drDuration = DrList:GetResetTime(category)
     local expirationTime = GetTime() + drDuration + ccDuration

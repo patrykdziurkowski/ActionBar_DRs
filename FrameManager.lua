@@ -1,46 +1,95 @@
---[[
-    FRAME MANAGER
-]]--
-FrameManager = {}
-function FrameManager:ShowBorder(button, level, appliedTime, expirationTime)
-    if button.drBorder == nil then self:CreateBorder(button) end
-    if button.drBorder.cooldown == nil then self:CreateCooldownSwipe(button) end
+local Edge = {}
+function Edge:New(button, inset)
+    inset = inset or 0
 
-    button.drBorder:Show()
-    button.drBorder.cooldown:SetCooldown(appliedTime, expirationTime - appliedTime)
+    local edge = button:CreateTexture()
+    edge:SetDesaturation(1)
+    edge:SetDrawLayer("ARTWORK")
+    edge:SetPoint("TOPLEFT", button, "TOPLEFT", -3 + inset, 3 - inset)
+    edge:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 4 - inset, -3 + inset)
+    edge:SetTexture("interface\\addons\\actionbar_drs\\textures\\lootgreatvault.png")
+    edge:SetVertexColor(0.7, 0.7, 0.7, 1)
+    edge:Hide()
 
-    local expiresIn = expirationTime - GetTime()
-    -- Cancel any existing timers to avoid early showing of a border
-    if button.drBorder.timer ~= nil then button.drBorder.timer:Cancel() end
-    button.drBorder.timer = C_Timer.NewTicker(expiresIn, function()
-        self:HideBorder(button)
-    end, 1)
+    return edge
 end
 
-function FrameManager:HideBorder(button)
-    if button.drBorder == nil then return end
-    button.drBorder:Hide()
-    button.drBorder.cooldown:Hide()
-end
+local Cooldown = {}
+function Cooldown:New(button, inset)
+    inset = inset or 0
 
-
-
-function FrameManager:CreateBorder(button)
-    local border = button:CreateTexture()
-    border:SetDesaturation(1)
-    border:SetDrawLayer("ARTWORK")
-    border:SetPoint("TOPLEFT", button, "TOPLEFT", -3, 3)
-    border:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 4, -3)
-    border:SetTexture("interface\\addons\\actionbar_drs\\textures\\lootgreatvault.png")
-    border:SetVertexColor(0.7, 0.7, 0.7, 1)
-    button.drBorder = border
-end
-
-function FrameManager:CreateCooldownSwipe(button)
     local cooldown = CreateFrame("Cooldown", nil, button, "CooldownFrameTemplate")
     cooldown:SetSwipeTexture("interface\\addons\\actionbar_drs\\textures\\lootgreatvault.png")
     cooldown:SetDrawEdge(false)
     cooldown:SetReverse(true)
-    cooldown:SetAllPoints()
-    button.drBorder.cooldown = cooldown
+    cooldown:SetPoint("TOPLEFT", button, "TOPLEFT", -3 + inset, 3 - inset)
+    cooldown:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 4 - inset, -3 + inset)
+    cooldown:Hide()
+
+    return cooldown
+end
+
+--[[
+    BORDER
+]]--
+local Border = {}
+function Border:New(button, inset)
+    inset = inset or 0
+
+    local border = {}
+    setmetatable(border, self)
+    self.__index = self
+
+    border.edge = Edge:New(button, inset)
+    border.cooldown = Cooldown:New(button, inset)
+
+    return border
+end
+
+function Border:Show(appliedTime, expirationTime)
+    self.edge:Show()
+    self.cooldown:SetCooldown(appliedTime, expirationTime - appliedTime)
+end
+
+function Border:Hide()
+    self.edge:Hide()
+    self.cooldown:Hide()
+end
+
+
+--[[
+    FRAME MANAGER
+]]--
+FrameManager = {}
+
+function FrameManager:ShowBorders(button, level, appliedTime, expirationTime)
+    if button.dr == nil then
+        local borders = {}
+        --reverse rendering order to make sure they're z-ordered properly
+        for i = 2, 0, -1 do
+            local border = Border:New(button, 6 * i)
+            borders[i] = border
+        end
+        button.dr = borders
+    end
+    for i = 0, (level - 1) do
+        local border = button.dr[i]
+        border:Show(appliedTime, expirationTime)
+    end
+
+    local expiresIn = expirationTime - GetTime()
+    -- Cancel any existing timers to avoid early showing of a border
+    if button.dr.timer ~= nil then button.dr.timer:Cancel() end
+    button.dr.timer = C_Timer.NewTicker(expiresIn, function()
+        for i = 0, 2 do
+            button.dr[i]:Hide()
+        end
+    end, 1)
+end
+
+function FrameManager:HideBorders(button)
+    if button.dr == nil then return end
+    for i = 0, 2 do
+        button.dr[i]:Hide() 
+    end
 end

@@ -86,9 +86,13 @@ function FrameManager:ShowBorders(button, level, appliedTime, expirationTime)
     end
 
 
-    for i = 0, (level - 1) do
+    for i = 0, 2 do
         local border = button.dr[i]
-        border:Show(appliedTime, expirationTime)
+        if i < level then
+            border:Show(appliedTime, expirationTime)
+        else
+            border:Hide()
+        end
     end
 
     local expiresIn = expirationTime - GetTime()

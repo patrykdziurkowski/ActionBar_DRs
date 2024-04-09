@@ -32,7 +32,7 @@ f2:SetScript("OnEvent", function(self, event)
             if level == 0 then 
                 FrameManager:HideBorder(button)
             else
-                FrameManager:CreateBorder(button, level, appliedTime, GetTime() + remainingDrTime)
+                FrameManager:ShowBorder(button, level, appliedTime, GetTime() + remainingDrTime)
             end
         end
     end

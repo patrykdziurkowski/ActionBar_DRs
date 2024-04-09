@@ -2,7 +2,7 @@
     FRAME MANAGER
 ]]--
 FrameManager = {}
-function FrameManager:CreateBorder(button, level, appliedTime, expirationTime)
+function FrameManager:ShowBorder(button, level, appliedTime, expirationTime)
     if button.drBorderTexture == nil then
         button.drBorderTexture = button:CreateTexture()
         button.drBorderTexture:SetDesaturation(1)

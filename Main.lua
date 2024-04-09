@@ -57,7 +57,7 @@ f:SetScript("OnEvent", function(self, event)
     
     if unit ~= nil then
         -- small delay because apparently this code runs before the debuff is available via AuraUtils
-        C_Timer.After(0.01, function()
+        RunNextFrame(function()
             local _, _, _, _, duration = AuraUtil.FindAuraByName(spellName, unit, "HARMFUL")
             -- nil duration means someone's immuning the CC so dont extend it
             if duration == nil then return end

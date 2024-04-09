@@ -23,9 +23,9 @@ function FrameManager:CreateBorder(button, level, appliedTime, expirationTime)
     cooldown:SetAllPoints()
     button.drBorderTexture.cooldown = cooldown
 
-    --TODO prevent timer overlap
     local expiresIn = expirationTime - GetTime()
-    C_Timer.After(expiresIn, function()
+    if button.drTimer ~= nil then button.drTimer:Cancel() end
+    button.drTimer = C_Timer.After(expiresIn, function()
         self:HideBorder(button)
     end)
 end

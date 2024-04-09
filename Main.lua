@@ -59,6 +59,8 @@ f:SetScript("OnEvent", function(self, event)
         -- small delay because apparently this code runs before the debuff is available via AuraUtils
         C_Timer.After(0.01, function()
             local _, _, _, _, duration = AuraUtil.FindAuraByName(spellName, unit, "HARMFUL")
+            -- nil duration means someone's immuning the CC so dont extend it
+            if duration == nil then return end
             DrTracker:AddDr(targetGUID, category, duration)
             f2:GetScript("OnEvent")(f2, "PLAYER_TARGET_CHANGED");
         end)

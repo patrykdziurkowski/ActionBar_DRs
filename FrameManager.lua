@@ -42,6 +42,18 @@ function Border:New(button, inset)
 
     border.edge = Edge:New(button, inset)
     border.cooldown = Cooldown:New(button, inset)
+    border.edgeAnimations = border.edge:CreateAnimationGroup()
+    border.cooldownAnimations = border.cooldown:CreateAnimationGroup()
+
+    local fadeEdge = border.edgeAnimations:CreateAnimation("Alpha")
+    fadeEdge:SetFromAlpha(100)
+    fadeEdge:SetToAlpha(0)
+    fadeEdge:SetDuration(0.5)
+
+    local fadeCooldown = border.cooldownAnimations:CreateAnimation("Alpha")
+    fadeCooldown:SetFromAlpha(100)
+    fadeCooldown:SetToAlpha(0)
+    fadeCooldown:SetDuration(0.5)
 
     return border
 end
@@ -72,6 +84,8 @@ function FrameManager:ShowBorders(button, level, appliedTime, expirationTime)
         end
         button.dr = borders
     end
+
+
     for i = 0, (level - 1) do
         local border = button.dr[i]
         border:Show(appliedTime, expirationTime)
@@ -82,7 +96,11 @@ function FrameManager:ShowBorders(button, level, appliedTime, expirationTime)
     if button.dr.timer ~= nil then button.dr.timer:Cancel() end
     button.dr.timer = C_Timer.NewTicker(expiresIn, function()
         for i = 0, 2 do
-            button.dr[i]:Hide()
+            button.dr[i].edgeAnimations:Play()
+            button.dr[i].cooldownAnimations:Play()
+            button.dr[i].edgeAnimations:SetScript("OnFinished", function()
+                button.dr[i]:Hide()
+            end)
         end
     end, 1)
 end
@@ -90,6 +108,6 @@ end
 function FrameManager:HideBorders(button)
     if button.dr == nil then return end
     for i = 0, 2 do
-        button.dr[i]:Hide() 
+        button.dr[i]:Hide()
     end
 end

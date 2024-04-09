@@ -15,13 +15,16 @@ function FrameManager:ShowBorder(button, level, appliedTime, expirationTime)
     button.drBorderTexture:Show()
 
     --Cooldown swipe widget
-    local cooldown = CreateFrame("Cooldown", nil, button, "CooldownFrameTemplate")
-    cooldown:SetSwipeTexture("interface\\addons\\actionbar_drs\\textures\\lootgreatvault.png")
-    cooldown:SetDrawEdge(false)
-    cooldown:SetReverse(true)
-    cooldown:SetCooldown(appliedTime, expirationTime - appliedTime)
-    cooldown:SetAllPoints()
-    button.drBorderTexture.cooldown = cooldown
+    if button.drBorderTexture.cooldown == nil then
+        local cooldown = CreateFrame("Cooldown", nil, button, "CooldownFrameTemplate")
+        cooldown:SetSwipeTexture("interface\\addons\\actionbar_drs\\textures\\lootgreatvault.png")
+        cooldown:SetDrawEdge(false)
+        cooldown:SetReverse(true)
+        
+        cooldown:SetAllPoints()
+        button.drBorderTexture.cooldown = cooldown
+    end
+    button.drBorderTexture.cooldown:SetCooldown(appliedTime, expirationTime - appliedTime)
 
     local expiresIn = expirationTime - GetTime()
     if button.drTimer ~= nil then button.drTimer:Cancel() end

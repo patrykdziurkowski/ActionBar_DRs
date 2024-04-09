@@ -12,9 +12,9 @@ function FrameManager:ShowBorder(button, level, appliedTime, expirationTime)
     local expiresIn = expirationTime - GetTime()
     -- Cancel any existing timers to avoid early showing of a border
     if button.drBorder.timer ~= nil then button.drBorder.timer:Cancel() end
-    button.drBorder.timer = C_Timer.After(expiresIn, function()
+    button.drBorder.timer = C_Timer.NewTicker(expiresIn, function()
         self:HideBorder(button)
-    end)
+    end, 1)
 end
 
 function FrameManager:HideBorder(button)

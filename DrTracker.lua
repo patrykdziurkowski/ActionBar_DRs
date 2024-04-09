@@ -23,7 +23,7 @@ function UnitDRs:Refresh(category, expirationTime)
 
     self[category].appliedTime = GetTime()
     self[category].expirationTime = expirationTime
-    if self[category].level < 2 then
+    if self[category].level < 3 then
         self[category].level = self[category].level + 1
     end
 end

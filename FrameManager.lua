@@ -20,6 +20,7 @@ end
 function FrameManager:HideBorder(button)
     if button.drBorder == nil then return end
     button.drBorder:Hide()
+    button.drBorder.cooldown:Hide()
 end
 
 

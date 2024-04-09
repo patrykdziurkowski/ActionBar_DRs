@@ -64,7 +64,9 @@ f:SetScript("OnEvent", function(self, event)
         end)
     else
         -- default cc duration if we fail figuring it out exactly
-        local ccDuration = 6
+        local level = DrTracker:GetDrInfo(targetGUID, spellId)
+        local diminishFactor = DrList:GetNextDR(level, category)
+        local ccDuration = 6 * diminishFactor
         DrTracker:AddDr(targetGUID, category, ccDuration)
         f2:GetScript("OnEvent")(f2, "PLAYER_TARGET_CHANGED");
     end

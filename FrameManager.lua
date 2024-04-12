@@ -160,6 +160,7 @@ end
 
 function FrameManager:HideBorders(button)
     if button.dr == nil then return end
+
     local border = button.dr
     border:Hide()
 end

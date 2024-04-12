@@ -34,7 +34,7 @@ f:SetScript("OnEvent", function(self, event)
     if subevent ~= "SPELL_CAST_SUCCESS" then return end
 
     -- if category is nil then it's not a CC so we skip
-    local category = DrList:GetCategoryBySpellID(spellId) 
+    local category = DrList:GetCategoryBySpellID(spellId)
     if category == nil then return end
 
     AddOn:CcCasted(targetGUID, spellId, category)
@@ -90,12 +90,14 @@ end
 function AddOn:DisplayDrIndicators(targetGUID)
     for _, button in pairs(AddOn.buttons) do
         local type, spellId = GetActionInfo(button.id)
-        if type ~= "spell" then return end
-
-        local level, appliedTime, remainingTime = DrTracker:GetDrInfo(targetGUID, spellId)
-        if level == 0 then FrameManager:HideBorders(button) return end
-
-        FrameManager:ShowBorders(button, level, appliedTime, GetTime() + remainingTime)
+        if type == "spell" then
+            local level, appliedTime, remainingTime = DrTracker:GetDrInfo(targetGUID, spellId)
+            if level == 0 then
+                FrameManager:HideBorders(button)
+            else
+                FrameManager:ShowBorders(button, level, appliedTime, GetTime() + remainingTime)
+            end
+        end
     end
 end
 

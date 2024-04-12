@@ -29,11 +29,15 @@ function Cooldown:New(button, inset)
     return cooldown
 end
 
+
+
+
+
 --[[
     RING
 ]]--
 local Ring = {}
-function Ring:New(button, inset)
+function Ring:New(button, inset, level)
     inset = inset or 0
 
     local ring = {}
@@ -44,6 +48,7 @@ function Ring:New(button, inset)
     ring.cooldown = Cooldown:New(button, inset)
     ring.edgeAnimations = ring.edge:CreateAnimationGroup()
     ring.cooldownAnimations = ring.cooldown:CreateAnimationGroup()
+    ring.level = level
 
     local fadeEdge = ring.edgeAnimations:CreateAnimation("Alpha")
     fadeEdge:SetFromAlpha(100)
@@ -68,74 +73,93 @@ function Ring:Hide()
     self.cooldown:Hide()
 end
 
+
+
+
+
 --[[
     BORDER
 ]]--
 
 local Border = {}
-function Border:Create(button)
-    local rings = {}
+function Border:New(button)
+    local border = {}
+    border.rings = {}
+
+    setmetatable(border, self)
+    self.__index = self
+
     --reverse rendering order to make sure they're z-ordered properly
     for i = 2, 0, -1 do
-        local ring = Ring:New(button, 6 * i)
-        rings[i] = ring
+        border.rings[i] = Ring:New(button, 6 * i, i)
     end
-    button.dr = rings
+    return border
 end
 
-function Border:Show(button, level, appliedTime, expirationTime)
-    for i = 0, 2 do
-        local ring = button.dr[i]
-        if i < level then
+function Border:Show(level, appliedTime, expirationTime)
+    self:ForEachRing(function(ring)
+        if ring.level < level then
             ring:Show(appliedTime, expirationTime)
         else
             ring:Hide()
         end
+    end)
+end
+
+function Border:Hide()
+    self:ForEachRing(function(ring)
+        ring:Hide()
+    end)
+end
+
+function Border:PauseExistingAnimations()
+    if self.rings[0].edgeAnimations:IsPlaying() then
+        self:ForEachRing(function(ring)
+            ring.edgeAnimations:Stop()
+            ring.cooldownAnimations:Stop()
+        end)
     end
 end
 
-function Border:Hide(button)
-    for i = 0, 2 do
-        button.dr[i]:Hide()
-    end
-end
-
-function Border:PauseExistingAnimations(button)
-    if button.dr[0].edgeAnimations:IsPlaying() then
-        for i = 0, 2 do
-            button.dr[i].edgeAnimations:Stop()
-            button.dr[i].cooldownAnimations:Stop()
-        end
-    end
-end
-
-function Border:StartExpirationTimer(button, expirationTime)
+function Border:StartExpirationTimer(expirationTime)
     local expiresIn = expirationTime - GetTime()
     -- Cancel any existing timers to avoid early showing of a border
-    if button.dr.timer ~= nil then button.dr.timer:Cancel() end
-    button.dr.timer = C_Timer.NewTicker(expiresIn, function()
-        for i = 0, 2 do
-            button.dr[i].edgeAnimations:Play()
-            button.dr[i].cooldownAnimations:Play()
-            button.dr[i].edgeAnimations:SetScript("OnFinished", function()
-                button.dr[i]:Hide()
+    if self.timer ~= nil then self.timer:Cancel() end
+    self.timer = C_Timer.NewTicker(expiresIn, function()
+        self:ForEachRing(function(ring)
+            ring.edgeAnimations:Play()
+            ring.cooldownAnimations:Play()
+            ring.edgeAnimations:SetScript("OnFinished", function()
+                ring:Hide()
             end)
-        end
+        end)
     end, 1)
 end
+
+function Border:ForEachRing(func)
+    for i = 0, 2 do
+        func(self.rings[i])
+    end
+end
+
+
+
+
 
 --[[
     FRAME MANAGER
 ]]--
 FrameManager = {}
 function FrameManager:ShowBorders(button, level, appliedTime, expirationTime)
-    if button.dr == nil then Border:Create(button) end
-    Border:PauseExistingAnimations(button)
-    Border:Show(button, level, appliedTime, expirationTime)
-    Border:StartExpirationTimer(button, expirationTime)
+    if button.dr == nil then button.dr = Border:New(button) end
+    local border = button.dr
+    border:PauseExistingAnimations()
+    border:Show(level, appliedTime, expirationTime)
+    border:StartExpirationTimer(expirationTime)
 end
 
 function FrameManager:HideBorders(button)
     if button.dr == nil then return end
-    Border:Hide(button)
+    local border = button.dr
+    border:Hide()
 end

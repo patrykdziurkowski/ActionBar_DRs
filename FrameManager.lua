@@ -163,7 +163,7 @@ end
     FRAME MANAGER
 ]]--
 FrameManager = {}
-function FrameManager:ShowBorders(button, level, appliedTime, expirationTime, inset)
+function FrameManager:ShowBorder(button, level, appliedTime, expirationTime, inset)
     if button.dr == nil then button.dr = Border:New(button, inset) end
     local border = button.dr
     border:PauseExistingAnimations()
@@ -171,7 +171,7 @@ function FrameManager:ShowBorders(button, level, appliedTime, expirationTime, in
     border:StartExpirationTimer(expirationTime)
 end
 
-function FrameManager:HideBorders(button)
+function FrameManager:HideBorder(button)
     if button.dr == nil then return end
 
     local border = button.dr

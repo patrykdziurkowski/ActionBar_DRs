@@ -16,41 +16,6 @@ end)
 
 
 --[[
-    SETTINGS FRAME
-]]--
-function AddOn:LoadOptionsPanel()
-    local panel = CreateFrame("Frame")
-    panel.name = "ActionBar_DRs"
-    InterfaceOptions_AddCategory(panel)
-
-    local title = panel:CreateFontString("ARTWORK", nil, "GameFontNormalLarge")
-    title:SetPoint("TOP", 0, -25)
-    title:SetText("ActionBar_DRs")
-
-    local insetSliderName = "ActionBar_DRs_InsetSlider"
-    local insetSlider = CreateFrame("Slider", insetSliderName, panel, "OptionsSliderTemplate")
-    insetSlider:SetMinMaxValues(-15, 15)
-    insetSlider:SetValue(UserSettings.inset)
-    insetSlider:SetValueStep(1)
-    insetSlider:SetObeyStepOnDrag(true)
-    insetSlider.text = _G[insetSliderName.."Text"]
-    insetSlider.textLow = _G[insetSliderName.."Low"]
-    insetSlider.textHigh = _G[insetSliderName.."High"]
-    insetSlider.text:SetText("Button Border Inset: " .. insetSlider:GetValue())
-    insetSlider:SetScript("OnValueChanged", function(self, value)
-        self.text:SetText("Button Border Inset: " .. value)
-        UserSettings.inset = value
-        for _, button in pairs(AddOn.buttons) do
-            FrameManager:ChangeInset(button, value)
-        end
-    end)
-    local min, max = insetSlider:GetMinMaxValues()
-    insetSlider.textLow:SetText(min)
-    insetSlider.textHigh:SetText(max)
-    insetSlider:SetPoint("TOP", 0, -75)
-end
-
---[[
     EVENTS
 ]]--
 local f3 = CreateFrame("Frame")
@@ -139,9 +104,9 @@ function AddOn:DisplayDrIndicators(targetGUID)
         if type == "spell" then
             local level, appliedTime, remainingTime = DrTracker:GetDrInfo(targetGUID, spellId)
             if level == 0 then
-                FrameManager:HideBorders(button)
+                FrameManager:HideBorder(button)
             else
-                FrameManager:ShowBorders(button, level, appliedTime, GetTime() + remainingTime, UserSettings.inset)
+                FrameManager:ShowBorder(button, level, appliedTime, GetTime() + remainingTime, UserSettings.inset)
             end
         end
     end
@@ -149,6 +114,44 @@ end
 
 function AddOn:HideDrIndicators()
     for _, button in pairs(AddOn.buttons) do
-        FrameManager:HideBorders(button)
+        FrameManager:HideBorder(button)
     end
+end
+
+
+
+
+--[[
+    SETTINGS FRAME
+]]--
+function AddOn:LoadOptionsPanel()
+    local panel = CreateFrame("Frame")
+    panel.name = "ActionBar_DRs"
+    InterfaceOptions_AddCategory(panel)
+
+    local title = panel:CreateFontString("ARTWORK", nil, "GameFontNormalLarge")
+    title:SetPoint("TOP", 0, -25)
+    title:SetText("ActionBar_DRs")
+
+    local insetSliderName = "ActionBar_DRs_InsetSlider"
+    local insetSlider = CreateFrame("Slider", insetSliderName, panel, "OptionsSliderTemplate")
+    insetSlider:SetMinMaxValues(-15, 15)
+    insetSlider:SetValue(UserSettings.inset)
+    insetSlider:SetValueStep(1)
+    insetSlider:SetObeyStepOnDrag(true)
+    insetSlider.text = _G[insetSliderName.."Text"]
+    insetSlider.textLow = _G[insetSliderName.."Low"]
+    insetSlider.textHigh = _G[insetSliderName.."High"]
+    insetSlider.text:SetText("Button Border Inset: " .. insetSlider:GetValue())
+    insetSlider:SetScript("OnValueChanged", function(self, value)
+        self.text:SetText("Button Border Inset: " .. value)
+        UserSettings.inset = value
+        for _, button in pairs(AddOn.buttons) do
+            FrameManager:ChangeInset(button, value)
+        end
+    end)
+    local min, max = insetSlider:GetMinMaxValues()
+    insetSlider.textLow:SetText(min)
+    insetSlider.textHigh:SetText(max)
+    insetSlider:SetPoint("TOP", 0, -75)
 end

@@ -4,6 +4,7 @@
 ## Author: Faxmetus-ArgentDawn (EU)
 ## Version: 0.1
 ## DefaultState: enabled
+## SavedVariables: UserSettings
 
 LibStub/LibStub.lua
 Libs/DRList-1.0/DRList-1.0.xml

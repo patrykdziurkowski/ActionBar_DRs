@@ -30,7 +30,7 @@ function Cooldown:New(button, inset)
 end
 
 --[[
-    Ring
+    RING
 ]]--
 local Ring = {}
 function Ring:New(button, inset)
@@ -68,30 +68,22 @@ function Ring:Hide()
     self.cooldown:Hide()
 end
 
-
 --[[
-    FRAME MANAGER
+    BORDER
 ]]--
-FrameManager = {}
 
-function FrameManager:ShowBorders(button, level, appliedTime, expirationTime)
-    if button.dr == nil then
-        local rings = {}
-        --reverse rendering order to make sure they're z-ordered properly
-        for i = 2, 0, -1 do
-            local ring = Ring:New(button, 6 * i)
-            rings[i] = ring
-        end
-        button.dr = rings
+local Border = {}
+function Border:Create(button)
+    local rings = {}
+    --reverse rendering order to make sure they're z-ordered properly
+    for i = 2, 0, -1 do
+        local ring = Ring:New(button, 6 * i)
+        rings[i] = ring
     end
+    button.dr = rings
+end
 
-    if button.dr[0].edgeAnimations:IsPlaying() then
-        for i = 0, 2 do
-            button.dr[i].edgeAnimations:Stop()
-            button.dr[i].cooldownAnimations:Stop()
-        end
-    end
-
+function Border:Show(button, level, appliedTime, expirationTime)
     for i = 0, 2 do
         local ring = button.dr[i]
         if i < level then
@@ -100,7 +92,24 @@ function FrameManager:ShowBorders(button, level, appliedTime, expirationTime)
             ring:Hide()
         end
     end
+end
 
+function Border:Hide(button)
+    for i = 0, 2 do
+        button.dr[i]:Hide()
+    end
+end
+
+function Border:PauseExistingAnimations(button)
+    if button.dr[0].edgeAnimations:IsPlaying() then
+        for i = 0, 2 do
+            button.dr[i].edgeAnimations:Stop()
+            button.dr[i].cooldownAnimations:Stop()
+        end
+    end
+end
+
+function Border:StartExpirationTimer(button, expirationTime)
     local expiresIn = expirationTime - GetTime()
     -- Cancel any existing timers to avoid early showing of a border
     if button.dr.timer ~= nil then button.dr.timer:Cancel() end
@@ -115,9 +124,18 @@ function FrameManager:ShowBorders(button, level, appliedTime, expirationTime)
     end, 1)
 end
 
+--[[
+    FRAME MANAGER
+]]--
+FrameManager = {}
+function FrameManager:ShowBorders(button, level, appliedTime, expirationTime)
+    if button.dr == nil then Border:Create(button) end
+    Border:PauseExistingAnimations(button)
+    Border:Show(button, level, appliedTime, expirationTime)
+    Border:StartExpirationTimer(button, expirationTime)
+end
+
 function FrameManager:HideBorders(button)
     if button.dr == nil then return end
-    for i = 0, 2 do
-        button.dr[i]:Hide()
-    end
+    Border:Hide(button)
 end

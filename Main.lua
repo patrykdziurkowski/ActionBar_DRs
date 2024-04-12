@@ -155,3 +155,10 @@ function AddOn:LoadOptionsPanel()
     insetSlider.textHigh:SetText(max)
     insetSlider:SetPoint("TOP", 0, -75)
 end
+
+SLASH_ABDRS1 = "/abdrs"
+SLASH_ABDRS2 = "/actionbardrs"
+SLASH_ABDRS3 = "/actionbar_drs"
+function SlashCmdList.ABDRS(msg, editbox)
+    InterfaceOptionsFrame_OpenToCategory("ActionBar_DRs")
+end

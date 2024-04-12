@@ -15,7 +15,38 @@ C_Timer.After(2, function()
 end)
 
 
+--[[
+    SETTINGS FRAME
+]]--
+local userSettings = {
+    inset = 6
+}
 
+local panel = CreateFrame("Frame")
+panel.name = "ActionBar_DRs"
+InterfaceOptions_AddCategory(panel)
+
+local title = panel:CreateFontString("ARTWORK", nil, "GameFontNormalLarge")
+title:SetPoint("TOP", 0, -25)
+title:SetText("ActionBar_DRs")
+
+local insetSliderName = "ActionBar_DRs_InsetSlider"
+local insetSlider = CreateFrame("Slider", insetSliderName, panel, "OptionsSliderTemplate")
+insetSlider:SetMinMaxValues(-15, 15)
+insetSlider:SetValue(6)
+insetSlider:SetValueStep(1)
+insetSlider:SetObeyStepOnDrag(true)
+insetSlider.text = _G[insetSliderName.."Text"]
+insetSlider.textLow = _G[insetSliderName.."Low"]
+insetSlider.textHigh = _G[insetSliderName.."High"]
+insetSlider.text:SetText("Button Border Inset: " .. insetSlider:GetValue())
+insetSlider:SetScript("OnValueChanged", function(self, value)
+    self.text:SetText("Button Border Inset: " .. value)
+end)
+local min, max = insetSlider:GetMinMaxValues()
+insetSlider.textLow:SetText(min)
+insetSlider.textHigh:SetText(max)
+insetSlider:SetPoint("TOP", 0, -75)
 
 --[[
     EVENTS

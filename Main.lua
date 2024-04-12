@@ -40,6 +40,9 @@ function AddOn:LoadOptionsPanel()
     insetSlider:SetScript("OnValueChanged", function(self, value)
         self.text:SetText("Button Border Inset: " .. value)
         UserSettings.inset = value
+        for _, button in pairs(AddOn.buttons) do
+            FrameManager:ChangeInset(button, value)
+        end
     end)
     local min, max = insetSlider:GetMinMaxValues()
     insetSlider.textLow:SetText(min)
@@ -138,7 +141,7 @@ function AddOn:DisplayDrIndicators(targetGUID)
             if level == 0 then
                 FrameManager:HideBorders(button)
             else
-                FrameManager:ShowBorders(button, level, appliedTime, GetTime() + remainingTime)
+                FrameManager:ShowBorders(button, level, appliedTime, GetTime() + remainingTime, UserSettings.inset)
             end
         end
     end

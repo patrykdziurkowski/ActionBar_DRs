@@ -73,7 +73,13 @@ function Ring:Hide()
     self.cooldown:Hide()
 end
 
+function Ring:ChangeInset(button, inset)
+    self.edge:SetPoint("TOPLEFT", button, "TOPLEFT", -3 + inset, 3 - inset)
+    self.edge:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 4 - inset, -3 + inset)
 
+    self.cooldown:SetPoint("TOPLEFT", button, "TOPLEFT", -3 + inset, 3 - inset)
+    self.cooldown:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 4 - inset, -3 + inset)
+end
 
 
 
@@ -82,7 +88,7 @@ end
 ]]--
 
 local Border = {}
-function Border:New(button)
+function Border:New(button, insetFactor)
     local border = {}
     border.rings = {}
 
@@ -91,7 +97,7 @@ function Border:New(button)
 
     --reverse rendering order to make sure they're z-ordered properly
     for i = 2, 0, -1 do
-        border.rings[i] = Ring:New(button, 6 * i, i)
+        border.rings[i] = Ring:New(button, insetFactor + (6 * i) + (insetFactor / 3), i)
     end
     return border
 end
@@ -110,6 +116,13 @@ function Border:Hide()
     self:ForEachRing(function(ring)
         ring:Hide()
     end)
+end
+
+function Border:ChangeInset(button, insetFactor)
+    for i = 2, 0, -1 do
+        local inset = insetFactor + (6 * i) + (insetFactor / 3)
+        self.rings[i]:ChangeInset(button, inset + (6 * i) + (inset / 3))
+    end
 end
 
 function Border:PauseExistingAnimations()
@@ -150,8 +163,8 @@ end
     FRAME MANAGER
 ]]--
 FrameManager = {}
-function FrameManager:ShowBorders(button, level, appliedTime, expirationTime)
-    if button.dr == nil then button.dr = Border:New(button) end
+function FrameManager:ShowBorders(button, level, appliedTime, expirationTime, inset)
+    if button.dr == nil then button.dr = Border:New(button, inset) end
     local border = button.dr
     border:PauseExistingAnimations()
     border:Show(level, appliedTime, expirationTime)
@@ -163,4 +176,10 @@ function FrameManager:HideBorders(button)
 
     local border = button.dr
     border:Hide()
+end
+
+function FrameManager:ChangeInset(button, insetFactor)
+    if button.dr == nil then return end
+    local border = button.dr
+    border:ChangeInset(button, insetFactor)
 end

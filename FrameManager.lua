@@ -1,12 +1,10 @@
 local Edge = {}
-function Edge:New(button, inset)
-    inset = inset or 0
-
+function Edge:New(button, size)
     local edge = button:CreateTexture()
+    edge:SetSize(size, size)
     edge:SetDesaturation(1)
     edge:SetDrawLayer("ARTWORK")
-    edge:SetPoint("TOPLEFT", button, "TOPLEFT", -3 + inset, 3 - inset)
-    edge:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 4 - inset, -3 + inset)
+    edge:SetPoint("CENTER", button)
     edge:SetTexture("interface\\addons\\actionbar_drs\\textures\\lootgreatvault.png")
     edge:SetVertexColor(0.7, 0.7, 0.7, 1)
     edge:Hide()
@@ -15,15 +13,13 @@ function Edge:New(button, inset)
 end
 
 local Cooldown = {}
-function Cooldown:New(button, inset)
-    inset = inset or 0
-
+function Cooldown:New(button, edge)
     local cooldown = CreateFrame("Cooldown", nil, button, "CooldownFrameTemplate")
     cooldown:SetSwipeTexture("interface\\addons\\actionbar_drs\\textures\\lootgreatvault.png")
+    cooldown:SetAllPoints(edge)
     cooldown:SetDrawEdge(false)
     cooldown:SetReverse(true)
-    cooldown:SetPoint("TOPLEFT", button, "TOPLEFT", -3 + inset, 3 - inset)
-    cooldown:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 4 - inset, -3 + inset)
+    cooldown:SetPoint("CENTER", button)
     cooldown:Hide()
 
     return cooldown
@@ -37,15 +33,13 @@ end
     RING
 ]]--
 local Ring = {}
-function Ring:New(button, inset, level)
-    inset = inset or 0
-
+function Ring:New(button, size, level)
     local ring = {}
     setmetatable(ring, self)
     self.__index = self
 
-    ring.edge = Edge:New(button, inset)
-    ring.cooldown = Cooldown:New(button, inset)
+    ring.edge = Edge:New(button, size)
+    ring.cooldown = Cooldown:New(button, ring.edge)
     ring.edgeAnimations = ring.edge:CreateAnimationGroup()
     ring.cooldownAnimations = ring.cooldown:CreateAnimationGroup()
     ring.level = level
@@ -73,12 +67,9 @@ function Ring:Hide()
     self.cooldown:Hide()
 end
 
-function Ring:ChangeInset(button, inset)
-    self.edge:SetPoint("TOPLEFT", button, "TOPLEFT", -3 + inset, 3 - inset)
-    self.edge:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 4 - inset, -3 + inset)
-
-    self.cooldown:SetPoint("TOPLEFT", button, "TOPLEFT", -3 + inset, 3 - inset)
-    self.cooldown:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 4 - inset, -3 + inset)
+function Ring:ChangeSize(size)
+    self.edge:SetSize(size, size)
+    self.cooldown:SetAllPoints(self.edge)
 end
 
 
@@ -87,7 +78,7 @@ end
     BORDER
 ]]--
 local Border = {}
-function Border:New(button, insetFactor)
+function Border:New(button, borderSize)
     local border = {}
     border.rings = {}
 
@@ -96,7 +87,8 @@ function Border:New(button, insetFactor)
 
     --reverse rendering order to make sure they're z-ordered properly
     for i = 2, 0, -1 do
-        border.rings[i] = Ring:New(button, insetFactor + (6 * i) + (insetFactor / 3), i)
+        local size = Border:CalculateSize(borderSize, i)
+        border.rings[i] = Ring:New(button, size, i)
     end
     return border
 end
@@ -117,11 +109,15 @@ function Border:Hide()
     end)
 end
 
-function Border:ChangeInset(button, insetFactor)
+function Border:ChangeSize(borderSize)
     for i = 2, 0, -1 do
-        local inset = insetFactor + (6 * i) + (insetFactor / 3)
-        self.rings[i]:ChangeInset(button, inset + (6 * i) + (inset / 3))
+        local size = Border:CalculateSize(borderSize, i)
+        self.rings[i]:ChangeSize(size)
     end
+end
+
+function Border:CalculateSize(size, ringLevel)
+    return size - ringLevel * size / 5
 end
 
 function Border:PauseExistingAnimations()
@@ -157,13 +153,12 @@ end
 
 
 
-
 --[[
     FRAME MANAGER
 ]]--
 FrameManager = {}
-function FrameManager:ShowBorder(button, level, appliedTime, expirationTime, inset)
-    if button.dr == nil then button.dr = Border:New(button, inset) end
+function FrameManager:ShowBorder(button, level, appliedTime, expirationTime, size)
+    if button.dr == nil then button.dr = Border:New(button, size) end
     local border = button.dr
     border:PauseExistingAnimations()
     border:Show(level, appliedTime, expirationTime)
@@ -177,8 +172,8 @@ function FrameManager:HideBorder(button)
     border:Hide()
 end
 
-function FrameManager:ChangeInset(button, insetFactor)
+function FrameManager:ChangeSize(button, size)
     if button.dr == nil then return end
     local border = button.dr
-    border:ChangeInset(button, insetFactor)
+    border:ChangeSize(size)
 end

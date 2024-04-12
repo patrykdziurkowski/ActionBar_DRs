@@ -27,7 +27,7 @@ f3:SetScript("OnEvent", function(self, event, addOnName)
 
     if UserSettings == nil then
         UserSettings = {
-            inset = 6
+            size = 60
         }
     end
     AddOn:LoadOptionsPanel()
@@ -107,7 +107,7 @@ function AddOn:DisplayDrIndicators(targetGUID)
             if level == 0 then
                 FrameManager:HideBorder(button)
             else
-                FrameManager:ShowBorder(button, level, appliedTime, GetTime() + remainingTime, UserSettings.inset)
+                FrameManager:ShowBorder(button, level, appliedTime, GetTime() + remainingTime, UserSettings.size)
             end
         end
     end
@@ -134,27 +134,27 @@ function AddOn:LoadOptionsPanel()
     title:SetPoint("TOP", 0, -25)
     title:SetText("ActionBar_DRs")
 
-    local insetSliderName = "ActionBar_DRs_InsetSlider"
-    local insetSlider = CreateFrame("Slider", insetSliderName, panel, "OptionsSliderTemplate")
-    insetSlider:SetMinMaxValues(-15, 15)
-    insetSlider:SetValue(UserSettings.inset)
-    insetSlider:SetValueStep(1)
-    insetSlider:SetObeyStepOnDrag(true)
-    insetSlider.text = _G[insetSliderName.."Text"]
-    insetSlider.textLow = _G[insetSliderName.."Low"]
-    insetSlider.textHigh = _G[insetSliderName.."High"]
-    insetSlider.text:SetText("Button Border Inset: " .. insetSlider:GetValue())
-    insetSlider:SetScript("OnValueChanged", function(self, value)
-        self.text:SetText("Button Border Inset: " .. value)
-        UserSettings.inset = value
+    local sizeSliderName = "ActionBar_DRs_SizeSlider"
+    local sizeSlider = CreateFrame("Slider", sizeSliderName, panel, "OptionsSliderTemplate")
+    sizeSlider:SetMinMaxValues(30, 250)
+    sizeSlider:SetValue(UserSettings.size)
+    sizeSlider:SetValueStep(1)
+    sizeSlider:SetObeyStepOnDrag(true)
+    sizeSlider.text = _G[sizeSliderName.."Text"]
+    sizeSlider.textLow = _G[sizeSliderName.."Low"]
+    sizeSlider.textHigh = _G[sizeSliderName.."High"]
+    sizeSlider.text:SetText("Button Border Size: " .. sizeSlider:GetValue())
+    sizeSlider:SetScript("OnValueChanged", function(self, value)
+        self.text:SetText("Button Border Size: " .. value)
+        UserSettings.size = value
         for _, button in pairs(AddOn.buttons) do
-            FrameManager:ChangeInset(button, value)
+            FrameManager:ChangeSize(button, value)
         end
     end)
-    local min, max = insetSlider:GetMinMaxValues()
-    insetSlider.textLow:SetText(min)
-    insetSlider.textHigh:SetText(max)
-    insetSlider:SetPoint("TOP", 0, -75)
+    local min, max = sizeSlider:GetMinMaxValues()
+    sizeSlider.textLow:SetText(min)
+    sizeSlider.textHigh:SetText(max)
+    sizeSlider:SetPoint("TOP", 0, -75)
 
     local testToggleName = "ActionBar_DRs_TestToggle"
     local testToggle = CreateFrame("Button", testToggleName, panel, "UIPanelButtonTemplate")
@@ -166,7 +166,7 @@ function AddOn:LoadOptionsPanel()
 
         if isTestModeEnabled then
             for _, button in pairs(AddOn.buttons) do
-                FrameManager:ShowBorder(button, math.random(4) - 1, GetTime() - math.random(10) - 1, GetTime() + 25 + math.random(5), UserSettings.inset)
+                FrameManager:ShowBorder(button, math.random(4) - 1, GetTime() - math.random(10) - 1, GetTime() + 25 + math.random(5), UserSettings.size)
             end
         else
             for _, button in pairs(AddOn.buttons) do

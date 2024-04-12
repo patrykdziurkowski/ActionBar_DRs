@@ -86,7 +86,6 @@ end
 --[[
     BORDER
 ]]--
-
 local Border = {}
 function Border:New(button, insetFactor)
     local border = {}

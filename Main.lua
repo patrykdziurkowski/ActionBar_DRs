@@ -3,6 +3,8 @@ local DrList = LibStub:GetLibrary("DRList-1.0")
 local DrTracker = DrTracker
 -- Module that creates the DR frames around buttons
 local FrameManager = FrameManager
+local isTestModeEnabled = false
+
 
 local AddOn = {}
 AddOn.buttons = {}
@@ -58,7 +60,6 @@ end)
 --[[
     ADDON FUNCTIONS
 ]]--
-
 function AddOn:CcCasted(targetGUID, spellId, category)
     local spellName = GetSpellInfo(spellId)
     local unit = UnitTokenFromGUID(targetGUID)
@@ -154,6 +155,25 @@ function AddOn:LoadOptionsPanel()
     insetSlider.textLow:SetText(min)
     insetSlider.textHigh:SetText(max)
     insetSlider:SetPoint("TOP", 0, -75)
+
+    local testToggleName = "ActionBar_DRs_TestToggle"
+    local testToggle = CreateFrame("Button", testToggleName, panel, "UIPanelButtonTemplate")
+    testToggle:SetText("Toggle Test Borders")
+    testToggle:SetSize(150, 40)
+    testToggle:SetPoint("TOP", 0, -125)
+    testToggle:SetScript("OnClick", function()
+        isTestModeEnabled = not isTestModeEnabled
+
+        if isTestModeEnabled then
+            for _, button in pairs(AddOn.buttons) do
+                FrameManager:ShowBorder(button, math.random(4) - 1, GetTime() - math.random(10) - 1, GetTime() + 25, UserSettings.inset)
+            end
+        else
+            for _, button in pairs(AddOn.buttons) do
+                FrameManager:HideBorder(button)
+            end
+        end
+    end)
 end
 
 SLASH_ABDRS1 = "/abdrs"

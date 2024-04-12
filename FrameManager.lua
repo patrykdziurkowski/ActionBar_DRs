@@ -30,40 +30,40 @@ function Cooldown:New(button, inset)
 end
 
 --[[
-    BORDER
+    Ring
 ]]--
-local Border = {}
-function Border:New(button, inset)
+local Ring = {}
+function Ring:New(button, inset)
     inset = inset or 0
 
-    local border = {}
-    setmetatable(border, self)
+    local ring = {}
+    setmetatable(ring, self)
     self.__index = self
 
-    border.edge = Edge:New(button, inset)
-    border.cooldown = Cooldown:New(button, inset)
-    border.edgeAnimations = border.edge:CreateAnimationGroup()
-    border.cooldownAnimations = border.cooldown:CreateAnimationGroup()
+    ring.edge = Edge:New(button, inset)
+    ring.cooldown = Cooldown:New(button, inset)
+    ring.edgeAnimations = ring.edge:CreateAnimationGroup()
+    ring.cooldownAnimations = ring.cooldown:CreateAnimationGroup()
 
-    local fadeEdge = border.edgeAnimations:CreateAnimation("Alpha")
+    local fadeEdge = ring.edgeAnimations:CreateAnimation("Alpha")
     fadeEdge:SetFromAlpha(100)
     fadeEdge:SetToAlpha(0)
     fadeEdge:SetDuration(0.5)
 
-    local fadeCooldown = border.cooldownAnimations:CreateAnimation("Alpha")
+    local fadeCooldown = ring.cooldownAnimations:CreateAnimation("Alpha")
     fadeCooldown:SetFromAlpha(100)
     fadeCooldown:SetToAlpha(0)
     fadeCooldown:SetDuration(0.5)
 
-    return border
+    return ring
 end
 
-function Border:Show(appliedTime, expirationTime)
+function Ring:Show(appliedTime, expirationTime)
     self.edge:Show()
     self.cooldown:SetCooldown(appliedTime, expirationTime - appliedTime)
 end
 
-function Border:Hide()
+function Ring:Hide()
     self.edge:Hide()
     self.cooldown:Hide()
 end
@@ -76,13 +76,13 @@ FrameManager = {}
 
 function FrameManager:ShowBorders(button, level, appliedTime, expirationTime)
     if button.dr == nil then
-        local borders = {}
+        local rings = {}
         --reverse rendering order to make sure they're z-ordered properly
         for i = 2, 0, -1 do
-            local border = Border:New(button, 6 * i)
-            borders[i] = border
+            local ring = Ring:New(button, 6 * i)
+            rings[i] = ring
         end
-        button.dr = borders
+        button.dr = rings
     end
 
     if button.dr[0].edgeAnimations:IsPlaying() then
@@ -93,11 +93,11 @@ function FrameManager:ShowBorders(button, level, appliedTime, expirationTime)
     end
 
     for i = 0, 2 do
-        local border = button.dr[i]
+        local ring = button.dr[i]
         if i < level then
-            border:Show(appliedTime, expirationTime)
+            ring:Show(appliedTime, expirationTime)
         else
-            border:Hide()
+            ring:Hide()
         end
     end
 

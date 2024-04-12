@@ -33,10 +33,14 @@ f:SetScript("OnEvent", function(self, event)
     local category = DrList:GetCategoryBySpellID(spellId) 
     if category == nil then return end
 
-    if string.sub(targetGUID, 1, 6) ~= "Player" and not DrList:IsPvECategory(category) then return end
-
     local spellName = GetSpellInfo(spellId)
     local unit = UnitTokenFromGUID(targetGUID)
+
+    -- quest boss mobs (i.e. the ones with an exclamation mark on their nameplate, not just any mob needed for a quest) tend to receive full DRs
+    -- players and their pets receive full DRs
+    -- other pve mobs either immune the CCs or they receive DRs only from a subset of their categories
+    local hasDiminishingReturns = UnitIsPlayer(unit) or UnitIsOtherPlayersPet(unit) or UnitIsQuestBoss(unit) or DrList:IsPvECategory(category)
+    if not hasDiminishingReturns then return end
     
     -- couldn't find unit anywhere in nameplates, party, pets, target, raid, etc.
     -- https://wowpedia.fandom.com/wiki/API_UnitTokenFromGUID

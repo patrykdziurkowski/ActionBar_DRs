@@ -1,10 +1,12 @@
+--[[
+    DEPENDENCIES
+]]--
 local DrList = LibStub:GetLibrary("DRList-1.0")
 
 --[[ 
     UNIT DRS
 ]]--
 local UnitDRs = {}
-
 function UnitDRs:New(o)
     o = o or {}
     setmetatable(o, self)
@@ -48,7 +50,6 @@ end
 ]]--
 DrTracker = {}
 DrTracker.unitDRs = {}
-
 function DrTracker:AddDr(unitGUID, category, ccDuration)
     if self.unitDRs[unitGUID] == nil then
         self.unitDRs[unitGUID] = UnitDRs:New()

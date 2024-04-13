@@ -29,6 +29,8 @@ end
 
 
 
+
+
 --[[
     RING
 ]]--
@@ -71,6 +73,9 @@ function Ring:ChangeSize(size)
     self.edge:SetSize(size, size)
     self.cooldown:SetAllPoints(self.edge)
 end
+
+
+
 
 
 
@@ -155,6 +160,8 @@ function Border:ForEachRing(func)
         func(self.rings[i])
     end
 end
+
+
 
 
 

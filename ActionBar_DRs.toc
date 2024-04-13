@@ -12,3 +12,5 @@ Libs/DRList-1.0/DRList-1.0.xml
 DrTracker.lua
 FrameManager.lua
 Main.lua
+OptionsPanel.lua
+ActionBar_DRs.lua

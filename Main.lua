@@ -167,6 +167,9 @@ function AddOn:LoadOptionsPanel()
         if isTestModeEnabled then
             for _, button in pairs(AddOn.buttons) do
                 FrameManager:ShowBorder(button, math.random(4) - 1, GetTime() - math.random(10) - 1, GetTime() + 25 + math.random(5), UserSettings.size)
+                C_Timer.After(30, function()
+                    isTestModeEnabled = false
+                end)
             end
         else
             for _, button in pairs(AddOn.buttons) do

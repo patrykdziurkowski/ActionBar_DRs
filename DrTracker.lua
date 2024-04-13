@@ -22,7 +22,12 @@ function UnitDRs:Refresh(category, expirationTime)
     self:Update(category)
 
     self[category].appliedTime = GetTime()
-    self[category].expirationTime = expirationTime
+    -- In rare (?) cases where you can overlap a long CC with a shorter one,
+    -- keep the bigger expiration time. Example: Sap -> immediate Gouge
+    if self[category].expirationTime < expirationTime then
+        self[category].expirationTime = expirationTime
+    end
+    -- Max DRs out at level 3 (0 - no drs, 3 - immune)
     if self[category].level < 3 then
         self[category].level = self[category].level + 1
     end

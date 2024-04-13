@@ -5,7 +5,6 @@ local DrTracker = DrTracker
 local FrameManager = FrameManager
 local isTestModeEnabled = false
 
-
 local AddOn = {}
 AddOn.buttons = {}
 C_Timer.After(2, function()
@@ -24,10 +23,14 @@ local f3 = CreateFrame("Frame")
 f3:RegisterEvent("ADDON_LOADED")
 f3:SetScript("OnEvent", function(self, event, addOnName)
     if addOnName ~= "ActionBar_DRs" then return end
-
     if UserSettings == nil then
         UserSettings = {
-            size = 60
+            size = 60,
+            color = {
+                r = 0.85,
+                g = 0.85,
+                b = 0.85
+            }
         }
     end
     AddOn:LoadOptionsPanel()
@@ -107,7 +110,7 @@ function AddOn:DisplayDrIndicators(targetGUID)
             if level == 0 then
                 FrameManager:HideBorder(button)
             else
-                FrameManager:ShowBorder(button, level, appliedTime, GetTime() + remainingTime, UserSettings.size)
+                FrameManager:ShowBorder(button, level, appliedTime, GetTime() + remainingTime, UserSettings.size, UserSettings.color)
             end
         end
     end
@@ -166,7 +169,7 @@ function AddOn:LoadOptionsPanel()
 
         if isTestModeEnabled then
             for _, button in pairs(AddOn.buttons) do
-                FrameManager:ShowBorder(button, math.random(4) - 1, GetTime() - math.random(10) - 1, GetTime() + 25 + math.random(5), UserSettings.size)
+                FrameManager:ShowBorder(button, math.random(4) - 1, GetTime() - math.random(10) - 1, GetTime() + 25 + math.random(5), UserSettings.size, UserSettings.color)
                 C_Timer.After(30, function()
                     isTestModeEnabled = false
                 end)
@@ -176,6 +179,37 @@ function AddOn:LoadOptionsPanel()
                 FrameManager:HideBorder(button)
             end
         end
+    end)
+
+    local colorChangeName = "ActionBar_DRs_ColorChange"
+    local colorChange = CreateFrame("Button", colorChangeName, panel, "UIPanelButtonTemplate")
+    colorChange:SetText("Change Color")
+    colorChange:SetSize(100, 40)
+    colorChange:SetPoint("TOP", 0, -175)
+    colorChange:SetScript("OnClick", function()
+        local color = UserSettings.color
+        ColorPickerFrame:SetScript("OnShow", function()
+            ColorPickerFrame.previousValues = { color.r, color.g, color.b }
+        end)
+        ColorPickerFrame:SetupColorPickerAndShow({
+            r = color.r,
+            g = color.g,
+            b = color.b,
+            opacity = nil,
+            hasOpacity = false,
+            swatchFunc = function()
+                color.r, color.g, color.b = ColorPickerFrame:GetColorRGB()
+                for _, button in pairs(AddOn.buttons) do
+                    FrameManager:ChangeBorderColor(button, color)
+                end
+            end,
+            cancelFunc = function(previousValues)
+                color.r, color.g, color.b = unpack(previousValues)
+                for _, button in pairs(AddOn.buttons) do
+                    FrameManager:ChangeBorderColor(button, color)
+                end
+            end
+        })
     end)
 end
 

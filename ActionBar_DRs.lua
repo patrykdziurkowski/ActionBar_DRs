@@ -13,6 +13,12 @@ UserSettings = UserSettings
 --[[
     EVENTS
 ]]--
+local f4 = CreateFrame("Frame")
+f4:RegisterEvent("PLAYER_ENTERING_WORLD")
+f4:SetScript("OnEvent", function(self, event)
+    AddOn:HookButtons()
+end)
+
 local f3 = CreateFrame("Frame")
 f3:RegisterEvent("ADDON_LOADED")
 f3:SetScript("OnEvent", function(self, event, addOnName)

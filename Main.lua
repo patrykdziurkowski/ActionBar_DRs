@@ -14,13 +14,48 @@ UserSettings = UserSettings
 ]]--
 AddOn = {}
 AddOn.buttons = {}
-C_Timer.After(2, function()
+function AddOn:HookButtons()
+    if IsAddOnLoaded("Bartender4") then
+        self:HookBartender4Buttons()
+    else
+        self:HookDefaultButtons()
+    end
+end
+
+function AddOn:HookBartender4Buttons()
     for i = 1, 360 do
         if _G["BT4Button"..i] ~= nil then
             table.insert(AddOn.buttons, _G["BT4Button"..i])
         end
     end
-end)
+end
+
+function AddOn:HookDefaultButtons()
+    for i = 1, 12 do
+        if _G["ActionButton"..i] ~= nil then
+            table.insert(AddOn.buttons, _G["ActionButton"..i])
+        end
+    end
+
+    -- keys are the <X> in various frames named MultiBar<X>
+    local keys = {5, 6, 7, "BottomLeft", "BottomRight", "Left", "Right"}
+    for _, key in pairs(keys) do
+        local barName = "MultiBar".. key
+        local bar = _G[barName]
+        if bar ~= nil then
+            for i = 1, 12 do
+                local button = _G[barName .. "Button" .. i]
+                if button ~= nil then
+                    table.insert(AddOn.buttons, button)
+                end
+            end
+        end
+    end
+
+    for _, button in pairs(AddOn.buttons) do
+        button.id = button:GetPagedID()
+    end
+end
 
 function AddOn:CcCasted(targetGUID, spellId, category)
     local spellName = GetSpellInfo(spellId)

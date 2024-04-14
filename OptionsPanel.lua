@@ -12,19 +12,27 @@ UserSettings = UserSettings
 --[[
     OPTIONS PANEL
 ]]--
-local isTestModeEnabled = false
-OptionsPanel = {}
+OptionsPanel = {
+    isTestModeEnabled = false
+}
 function OptionsPanel:Create()
-    local panel = CreateFrame("Frame")
-    panel.name = "ActionBar_DRs"
-    InterfaceOptions_AddCategory(panel)
+    self.panel = CreateFrame("Frame")
+    self.panel.name = "ActionBar_DRs"
+    InterfaceOptions_AddCategory(self.panel)
 
-    local title = panel:CreateFontString("ARTWORK", nil, "GameFontNormalLarge")
+    local title = self.panel:CreateFontString("ARTWORK", nil, "GameFontNormalLarge")
     title:SetPoint("TOP", 0, -25)
     title:SetText("ActionBar_DRs")
 
+    self:CreateSizeSlider()
+    self:CreateAlphaSlider()
+    self:CreateTestToggle()
+    self:CreateColorChange()
+end
+
+function OptionsPanel:CreateSizeSlider()
     local sizeSliderName = "ActionBar_DRs_SizeSlider"
-    local sizeSlider = CreateFrame("Slider", sizeSliderName, panel, "OptionsSliderTemplate")
+    local sizeSlider = CreateFrame("Slider", sizeSliderName, self.panel, "OptionsSliderTemplate")
     sizeSlider:SetMinMaxValues(30, 250)
     sizeSlider:SetValue(UserSettings.size)
     sizeSlider:SetValueStep(1)
@@ -44,9 +52,11 @@ function OptionsPanel:Create()
     sizeSlider.textLow:SetText(min)
     sizeSlider.textHigh:SetText(max)
     sizeSlider:SetPoint("TOP", 0, -75)
+end
 
+function OptionsPanel:CreateAlphaSlider()
     local alphaSliderName = "ActionBar_DRs_AlphaSlider"
-    local alphaSlider = CreateFrame("Slider", alphaSliderName, panel, "OptionsSliderTemplate")
+    local alphaSlider = CreateFrame("Slider", alphaSliderName, self.panel, "OptionsSliderTemplate")
     alphaSlider:SetMinMaxValues(0, 1)
     alphaSlider:SetValue(UserSettings.alpha)
     alphaSlider:SetValueStep(0.01)
@@ -67,20 +77,22 @@ function OptionsPanel:Create()
     alphaSlider.textLow:SetText(min)
     alphaSlider.textHigh:SetText(max)
     alphaSlider:SetPoint("TOP", 0, -125)
+end
 
+function OptionsPanel:CreateTestToggle()
     local testToggleName = "ActionBar_DRs_TestToggle"
-    local testToggle = CreateFrame("Button", testToggleName, panel, "UIPanelButtonTemplate")
+    local testToggle = CreateFrame("Button", testToggleName, self.panel, "UIPanelButtonTemplate")
     testToggle:SetText("Toggle Test Borders")
     testToggle:SetSize(150, 40)
     testToggle:SetPoint("TOP", 0, -175)
     testToggle:SetScript("OnClick", function()
-        isTestModeEnabled = not isTestModeEnabled
+        self.isTestModeEnabled = not self.isTestModeEnabled
 
-        if isTestModeEnabled then
+        if self.isTestModeEnabled then
             for _, button in pairs(AddOn.buttons) do
                 FrameManager:ShowBorder(button, math.random(4) - 1, GetTime() - math.random(10) - 1, GetTime() + 25 + math.random(5), UserSettings.size, UserSettings.color, UserSettings.alpha)
                 C_Timer.After(30, function()
-                    isTestModeEnabled = false
+                    self.isTestModeEnabled = false
                 end)
             end
         else
@@ -89,9 +101,11 @@ function OptionsPanel:Create()
             end
         end
     end)
+end
 
+function OptionsPanel:CreateColorChange()
     local colorChangeName = "ActionBar_DRs_ColorChange"
-    local colorChange = CreateFrame("Button", colorChangeName, panel, "UIPanelButtonTemplate")
+    local colorChange = CreateFrame("Button", colorChangeName, self.panel, "UIPanelButtonTemplate")
     colorChange:SetText("Change Color")
     colorChange:SetSize(100, 40)
     colorChange:SetPoint("TOP", 0, -225)

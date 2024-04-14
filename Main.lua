@@ -63,8 +63,8 @@ end
 
 function AddOn:DisplayDrIndicators(targetGUID)
     for _, button in pairs(AddOn.buttons) do
-        local type, spellId = GetActionInfo(button.id)
-        if type == "spell" then
+        local type, spellId, subtype = GetActionInfo(button.id)
+        if type == "spell" or type == "macro" and subtype == "spell" then
             local level, appliedTime, remainingTime = DrTracker:GetDrInfo(targetGUID, spellId)
             if level == 0 then
                 FrameManager:HideBorder(button)

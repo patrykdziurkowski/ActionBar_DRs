@@ -69,7 +69,7 @@ function AddOn:DisplayDrIndicators(targetGUID)
             if level == 0 then
                 FrameManager:HideBorder(button)
             else
-                FrameManager:ShowBorder(button, level, appliedTime, GetTime() + remainingTime, UserSettings.size, UserSettings.color)
+                FrameManager:ShowBorder(button, level, appliedTime, GetTime() + remainingTime, UserSettings.size, UserSettings.color, UserSettings.alpha)
             end
         end
     end

@@ -45,17 +45,40 @@ function OptionsPanel:Create()
     sizeSlider.textHigh:SetText(max)
     sizeSlider:SetPoint("TOP", 0, -75)
 
+    local alphaSliderName = "ActionBar_DRs_AlphaSlider"
+    local alphaSlider = CreateFrame("Slider", alphaSliderName, panel, "OptionsSliderTemplate")
+    alphaSlider:SetMinMaxValues(0, 1)
+    alphaSlider:SetValue(UserSettings.alpha)
+    alphaSlider:SetValueStep(0.01)
+    alphaSlider:SetObeyStepOnDrag(true)
+    alphaSlider.text = _G[alphaSliderName.."Text"]
+    alphaSlider.textLow = _G[alphaSliderName.."Low"]
+    alphaSlider.textHigh = _G[alphaSliderName.."High"]
+    alphaSlider.text:SetText("Cooldown Widget Alpha: " .. math.floor(alphaSlider:GetValue() * 100) / 100)
+    alphaSlider:SetScript("OnValueChanged", function(self, value)
+        value = math.floor(value * 100) / 100
+        self.text:SetText("Cooldown Widget Alpha: " .. value)
+        UserSettings.alpha = value
+        for _, button in pairs(AddOn.buttons) do
+            FrameManager:ChangeCooldownAlpha(button, value)
+        end
+    end)
+    local min, max = alphaSlider:GetMinMaxValues()
+    alphaSlider.textLow:SetText(min)
+    alphaSlider.textHigh:SetText(max)
+    alphaSlider:SetPoint("TOP", 0, -125)
+
     local testToggleName = "ActionBar_DRs_TestToggle"
     local testToggle = CreateFrame("Button", testToggleName, panel, "UIPanelButtonTemplate")
     testToggle:SetText("Toggle Test Borders")
     testToggle:SetSize(150, 40)
-    testToggle:SetPoint("TOP", 0, -125)
+    testToggle:SetPoint("TOP", 0, -175)
     testToggle:SetScript("OnClick", function()
         isTestModeEnabled = not isTestModeEnabled
 
         if isTestModeEnabled then
             for _, button in pairs(AddOn.buttons) do
-                FrameManager:ShowBorder(button, math.random(4) - 1, GetTime() - math.random(10) - 1, GetTime() + 25 + math.random(5), UserSettings.size, UserSettings.color)
+                FrameManager:ShowBorder(button, math.random(4) - 1, GetTime() - math.random(10) - 1, GetTime() + 25 + math.random(5), UserSettings.size, UserSettings.color, UserSettings.alpha)
                 C_Timer.After(30, function()
                     isTestModeEnabled = false
                 end)
@@ -71,7 +94,7 @@ function OptionsPanel:Create()
     local colorChange = CreateFrame("Button", colorChangeName, panel, "UIPanelButtonTemplate")
     colorChange:SetText("Change Color")
     colorChange:SetSize(100, 40)
-    colorChange:SetPoint("TOP", 0, -175)
+    colorChange:SetPoint("TOP", 0, -225)
     colorChange:SetScript("OnClick", function()
         local color = UserSettings.color
         ColorPickerFrame:SetScript("OnShow", function()

@@ -20,6 +20,7 @@ f3:SetScript("OnEvent", function(self, event, addOnName)
     if UserSettings == nil then
         UserSettings = {
             size = 60,
+            alpha = 1,
             color = {
                 r = 0.85,
                 g = 0.85,

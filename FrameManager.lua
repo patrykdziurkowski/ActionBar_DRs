@@ -13,12 +13,13 @@ function Edge:New(button, size, color)
 end
 
 local Cooldown = {}
-function Cooldown:New(button, edge)
+function Cooldown:New(button, edge, alpha)
     local cooldown = CreateFrame("Cooldown", nil, button, "CooldownFrameTemplate")
     cooldown:SetSwipeTexture("interface\\addons\\actionbar_drs\\textures\\lootgreatvault.png")
     cooldown:SetAllPoints(edge)
     cooldown:SetDrawEdge(false)
     cooldown:SetReverse(true)
+    cooldown:SetAlpha(alpha)
     cooldown:SetPoint("CENTER", button)
     cooldown:Hide()
 
@@ -35,13 +36,13 @@ end
     RING
 ]]--
 local Ring = {}
-function Ring:New(button, size, level, color)
+function Ring:New(button, size, level, color, alpha)
     local ring = {}
     setmetatable(ring, self)
     self.__index = self
 
     ring.edge = Edge:New(button, size, color)
-    ring.cooldown = Cooldown:New(button, ring.edge)
+    ring.cooldown = Cooldown:New(button, ring.edge, alpha)
     ring.edgeAnimations = ring.edge:CreateAnimationGroup()
     ring.cooldownAnimations = ring.cooldown:CreateAnimationGroup()
     ring.level = level
@@ -83,7 +84,7 @@ end
     BORDER
 ]]--
 local Border = {}
-function Border:New(button, borderSize, color)
+function Border:New(button, borderSize, color, alpha)
     local border = {}
     border.rings = {}
 
@@ -93,7 +94,7 @@ function Border:New(button, borderSize, color)
     --reverse rendering order to make sure they're z-ordered properly
     for i = 2, 0, -1 do
         local size = Border:CalculateSize(borderSize, i)
-        border.rings[i] = Ring:New(button, size, i, color)
+        border.rings[i] = Ring:New(button, size, i, color, alpha)
     end
     return border
 end
@@ -117,6 +118,12 @@ end
 function Border:ChangeColor(color)
     self:ForEachRing(function(ring)
         ring.edge:SetVertexColor(color.r, color.g, color.b, 1)
+    end)
+end
+
+function Border:ChangeAlpha(alpha)
+    self:ForEachRing(function(ring)
+        ring.cooldown:SetAlpha(alpha)
     end)
 end
 
@@ -170,8 +177,8 @@ end
     FRAME MANAGER
 ]]--
 FrameManager = {}
-function FrameManager:ShowBorder(button, level, appliedTime, expirationTime, size, color)
-    if button.dr == nil then button.dr = Border:New(button, size, color) end
+function FrameManager:ShowBorder(button, level, appliedTime, expirationTime, size, color, alpha)
+    if button.dr == nil then button.dr = Border:New(button, size, color, alpha) end
     local border = button.dr
     border:PauseExistingAnimations()
     border:Show(level, appliedTime, expirationTime)
@@ -195,4 +202,10 @@ function FrameManager:ChangeBorderColor(button, color)
     if button.dr == nil then return end
     local border = button.dr
     border:ChangeColor(color)
+end
+
+function FrameManager:ChangeCooldownAlpha(button, alpha)
+    if button.dr == nil then return end
+    local border = button.dr
+    border:ChangeAlpha(alpha)
 end

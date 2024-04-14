@@ -3,6 +3,7 @@
 ]]--
 local DrList = LibStub:GetLibrary("DRList-1.0")
 AddOn = AddOn
+OptionsPanel = OptionsPanel
 SlashCmdList = SlashCmdList
 InterfaceOptionsFrame_OpenToCategory = InterfaceOptionsFrame_OpenToCategory
 UserSettings = UserSettings

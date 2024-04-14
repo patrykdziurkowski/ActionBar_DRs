@@ -17,15 +17,31 @@ AddOn.buttons = {}
 function AddOn:HookButtons()
     if IsAddOnLoaded("Bartender4") then
         self:HookBartender4Buttons()
+    elseif IsAddOnLoaded("ElvUI") then
+        self:HookElvUIButtons()
     else
         self:HookDefaultButtons()
     end
 end
 
 function AddOn:HookBartender4Buttons()
-    for i = 1, 360 do
-        if _G["BT4Button"..i] ~= nil then
-            table.insert(AddOn.buttons, _G["BT4Button"..i])
+    for i = 1, 360 do 
+        local button = _G["BT4Button"..i]
+        if button ~= nil and button.id ~= nil then
+            button.GetActionId = function(btn) return btn.id end
+            table.insert(AddOn.buttons, button)
+        end
+    end
+end
+
+function AddOn:HookElvUIButtons()
+    for i = 1, 15 do
+        for j = 1, 12 do
+            local button = _G["ElvUI_Bar" .. i .. "Button" .. j]
+            if button ~= nil and button._state_action ~= nil then
+                button.GetActionId = function(btn) return btn._state_action end
+                table.insert(AddOn.buttons, button)
+            end
         end
     end
 end
@@ -53,7 +69,7 @@ function AddOn:HookDefaultButtons()
     end
 
     for _, button in pairs(AddOn.buttons) do
-        button.id = button:GetPagedID()
+        button.GetActionId = function(btn) return btn:GetPagedID() end
     end
 end
 
@@ -98,7 +114,8 @@ end
 
 function AddOn:DisplayDrIndicators(targetGUID)
     for _, button in pairs(AddOn.buttons) do
-        local type, spellId, subtype = GetActionInfo(button.id)
+        local actionId = button:GetActionId()
+        local type, spellId, subtype = GetActionInfo(actionId)
         if type == "spell" or type == "macro" and subtype == "spell" then
             local level, appliedTime, remainingTime = DrTracker:GetDrInfo(targetGUID, spellId)
             if level == 0 then

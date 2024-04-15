@@ -27,8 +27,11 @@ end
 function AddOn:HookBartender4Buttons()
     for i = 1, 360 do 
         local button = _G["BT4Button"..i]
-        if button ~= nil and button.id ~= nil then
-            button.GetActionId = function(btn) return btn.id end
+        if button ~= nil then
+            button.GetActionId = function(btn)
+                if btn._state_action == nil then return -1 end
+                return btn._state_action
+            end
             table.insert(AddOn.buttons, button)
         end
     end
@@ -38,8 +41,11 @@ function AddOn:HookElvUIButtons()
     for i = 1, 15 do
         for j = 1, 12 do
             local button = _G["ElvUI_Bar" .. i .. "Button" .. j]
-            if button ~= nil and button._state_action ~= nil then
-                button.GetActionId = function(btn) return btn._state_action end
+            if button ~= nil then
+                button.GetActionId = function(btn)
+                    if btn._state_action == nil then return -1 end
+                    return btn._state_action
+                end
                 table.insert(AddOn.buttons, button)
             end
         end
@@ -69,7 +75,10 @@ function AddOn:HookDefaultButtons()
     end
 
     for _, button in pairs(AddOn.buttons) do
-        button.GetActionId = function(btn) return btn:GetPagedID() end
+        button.GetActionId = function(btn)
+            if btn:GetPagedID() == nil then return -1 end
+            return btn:GetPagedID()
+        end
     end
 end
 

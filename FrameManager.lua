@@ -1,11 +1,11 @@
 local Edge = {}
-function Edge:New(button, size, color)
+function Edge:New(button, size, color, texturePath)
     local edge = button:CreateTexture()
     edge:SetSize(size, size)
     edge:SetDesaturation(1)
     edge:SetDrawLayer("OVERLAY")
     edge:SetPoint("CENTER", button)
-    edge:SetTexture("interface\\addons\\actionbar_drs\\textures\\lootgreatvault.png")
+    edge:SetTexture(texturePath)
     edge:SetVertexColor(color.r, color.g, color.b, 1)
     edge:Hide()
 
@@ -13,9 +13,9 @@ function Edge:New(button, size, color)
 end
 
 local Cooldown = {}
-function Cooldown:New(button, edge, alpha)
+function Cooldown:New(button, edge, alpha, texturePath)
     local cooldown = CreateFrame("Cooldown", nil, button, "CooldownFrameTemplate")
-    cooldown:SetSwipeTexture("interface\\addons\\actionbar_drs\\textures\\lootgreatvault.png")
+    cooldown:SetSwipeTexture(texturePath)
     cooldown:SetAllPoints(edge)
     cooldown:SetDrawEdge(false)
     cooldown:SetReverse(true)
@@ -36,13 +36,13 @@ end
     RING
 ]]--
 local Ring = {}
-function Ring:New(button, size, level, color, alpha)
+function Ring:New(button, size, level, color, alpha, texturePath)
     local ring = {}
     setmetatable(ring, self)
     self.__index = self
 
-    ring.edge = Edge:New(button, size, color)
-    ring.cooldown = Cooldown:New(button, ring.edge, alpha)
+    ring.edge = Edge:New(button, size, color, texturePath)
+    ring.cooldown = Cooldown:New(button, ring.edge, alpha, texturePath)
     ring.edgeAnimations = ring.edge:CreateAnimationGroup()
     ring.cooldownAnimations = ring.cooldown:CreateAnimationGroup()
     ring.level = level
@@ -84,7 +84,7 @@ end
     BORDER
 ]]--
 local Border = {}
-function Border:New(button, borderSize, color, alpha)
+function Border:New(button, borderSize, color, alpha, texturePath)
     local border = {}
     border.rings = {}
 
@@ -94,7 +94,7 @@ function Border:New(button, borderSize, color, alpha)
     --reverse rendering order to make sure they're z-ordered properly
     for i = 2, 0, -1 do
         local size = Border:CalculateSize(borderSize, i)
-        border.rings[i] = Ring:New(button, size, i, color, alpha)
+        border.rings[i] = Ring:New(button, size, i, color, alpha, texturePath)
     end
     return border
 end
@@ -112,6 +112,13 @@ end
 function Border:Hide()
     self:ForEachRing(function(ring)
         ring:Hide()
+    end)
+end
+
+function Border:ChangeTexture(texturePath)
+    self:ForEachRing(function(ring)
+        ring.edge:SetTexture(texturePath)
+        ring.cooldown:SetSwipeTexture(texturePath)
     end)
 end
 
@@ -177,8 +184,8 @@ end
     FRAME MANAGER
 ]]--
 FrameManager = {}
-function FrameManager:ShowBorder(button, level, appliedTime, expirationTime, size, color, alpha)
-    if button.dr == nil then button.dr = Border:New(button, size, color, alpha) end
+function FrameManager:ShowBorder(button, level, appliedTime, expirationTime, size, color, alpha, texturePath)
+    if button.dr == nil then button.dr = Border:New(button, size, color, alpha, texturePath) end
     local border = button.dr
     border:PauseExistingAnimations()
     border:Show(level, appliedTime, expirationTime)
@@ -208,4 +215,10 @@ function FrameManager:ChangeCooldownAlpha(button, alpha)
     if button.dr == nil then return end
     local border = button.dr
     border:ChangeAlpha(alpha)
+end
+
+function FrameManager:ChangeBorderTexture(button, texturePath)
+    if button.dr == nil then return end
+    local border = button.dr
+    border:ChangeTexture(texturePath)
 end

@@ -32,6 +32,10 @@ f3:SetScript("OnEvent", function(self, event, addOnName)
                 r = 0.85,
                 g = 0.85,
                 b = 0.85
+            },
+            texture = {
+                name = "Square",
+                path = "interface\\addons\\actionbar_drs\\textures\\customsquare.png"
             }
         }
     end

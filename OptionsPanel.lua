@@ -28,6 +28,7 @@ function OptionsPanel:Create()
     self:CreateAlphaSlider()
     self:CreateTestToggle()
     self:CreateColorChange()
+    self:CreateTextureDropDown()
 end
 
 function OptionsPanel:CreateSizeSlider()
@@ -79,18 +80,52 @@ function OptionsPanel:CreateAlphaSlider()
     alphaSlider:SetPoint("TOP", 0, -125)
 end
 
+function OptionsPanel:CreateTextureDropDown()
+    local textureDropDownName = "ActionBar_DRs_TextureDropdown"
+    local textureDropDown = CreateFrame("Frame", textureDropDownName, self.panel, "UIDropDownMenuTemplate")
+    textureDropDown:SetPoint("TOP", 0, -175)
+    UIDropDownMenu_SetText(textureDropDown, UserSettings.texture.name)
+    UIDropDownMenu_SetWidth(textureDropDown, 150)
+
+    UIDropDownMenu_Initialize(textureDropDown, function()
+        local OptionClicked = function(self, optionText, texturePath, checked)
+            UIDropDownMenu_SetText(textureDropDown, optionText)
+            for _, button in pairs(AddOn.buttons) do
+                UserSettings.texture.name = optionText
+                UserSettings.texture.path = texturePath
+                FrameManager:ChangeBorderTexture(button, texturePath)
+            end
+        end
+
+        UIDropDownMenu_AddButton({
+            text = "Square",
+            arg1 = "Square",
+            arg2 = "interface\\addons\\actionbar_drs\\textures\\customsquare.png",
+            checked = UserSettings.texture.name == "Square",
+            func = OptionClicked
+        })
+        UIDropDownMenu_AddButton({
+            text = "Octagon",
+            arg1 = "Octagon",
+            arg2 = "interface\\addons\\actionbar_drs\\textures\\lootgreatvault.png",
+            checked = UserSettings.texture.name == "Octagon",
+            func = OptionClicked
+        })
+    end)
+end
+
 function OptionsPanel:CreateTestToggle()
     local testToggleName = "ActionBar_DRs_TestToggle"
     local testToggle = CreateFrame("Button", testToggleName, self.panel, "UIPanelButtonTemplate")
     testToggle:SetText("Toggle Test Borders")
     testToggle:SetSize(150, 40)
-    testToggle:SetPoint("TOP", 0, -175)
+    testToggle:SetPoint("TOP", 0, -225)
     testToggle:SetScript("OnClick", function()
         self.isTestModeEnabled = not self.isTestModeEnabled
 
         if self.isTestModeEnabled then
             for _, button in pairs(AddOn.buttons) do
-                FrameManager:ShowBorder(button, math.random(4) - 1, GetTime() - math.random(10) - 1, GetTime() + 25 + math.random(5), UserSettings.size, UserSettings.color, UserSettings.alpha)
+                FrameManager:ShowBorder(button, math.random(4) - 1, GetTime() - math.random(10) - 1, GetTime() + 25 + math.random(5), UserSettings.size, UserSettings.color, UserSettings.alpha, UserSettings.texture.path)
                 C_Timer.After(30, function()
                     self.isTestModeEnabled = false
                 end)
@@ -107,8 +142,8 @@ function OptionsPanel:CreateColorChange()
     local colorChangeName = "ActionBar_DRs_ColorChange"
     local colorChange = CreateFrame("Button", colorChangeName, self.panel, "UIPanelButtonTemplate")
     colorChange:SetText("Change Color")
-    colorChange:SetSize(100, 40)
-    colorChange:SetPoint("TOP", 0, -225)
+    colorChange:SetSize(125, 40)
+    colorChange:SetPoint("TOP", 0, -275)
     colorChange:SetScript("OnClick", function()
         local color = UserSettings.color
         ColorPickerFrame:SetScript("OnShow", function()

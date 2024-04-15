@@ -44,6 +44,13 @@ function UnitDRs:Update(category)
     end
 end
 
+function UnitDRs:Shorten(category, expirationTime)
+    self:Update(category)
+
+    self[category].appliedTime = GetTime()
+    self[category].expirationTime = expirationTime
+end
+
 
 --[[ 
     DR TRACKER
@@ -78,4 +85,16 @@ function DrTracker:GetDrInfo(unitGUID, spellId)
     local remainingDrTime = drs[category].expirationTime - GetTime()
     if remainingDrTime < 0 then remainingDrTime = 0 end
     return level, appliedTime, remainingDrTime
+end
+
+function DrTracker:ShortenDr(unitGUID, category)
+    if self.unitDRs[unitGUID] == nil then
+        self.unitDRs[unitGUID] = UnitDRs:New()
+    end
+
+    local drs = self.unitDRs[unitGUID]
+    local drDuration = DrList:GetResetTime(category)
+    local expirationTime = GetTime() + drDuration
+
+    drs:Shorten(category, expirationTime)
 end

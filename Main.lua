@@ -114,6 +114,11 @@ function AddOn:CcCasted(targetGUID, spellId, category)
     end)
 end
 
+function AddOn:CcRemoved(targetGUID, category)
+    DrTracker:ShortenDr(targetGUID, category)
+    AddOn:UpdateFrames()
+end
+
 function AddOn:UpdateFrames()
     local targetGUID = UnitGUID("target")
 

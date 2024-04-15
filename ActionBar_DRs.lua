@@ -14,6 +14,16 @@ UserSettings = UserSettings
 --[[
     EVENTS
 ]]--
+local f5 = CreateFrame("Frame")
+f5:RegisterEvent("ACTIONBAR_SLOT_CHANGED")
+f5:SetScript("OnEvent", function(self, event, slot)
+    -- run next frame to prevent evaluating which button to draw border for based
+    -- on the old buttons that are about to disappear (i.e. when changing stances)
+    RunNextFrame(function()
+        AddOn:UpdateFrames()
+    end)
+end)
+
 local f4 = CreateFrame("Frame")
 f4:RegisterEvent("PLAYER_ENTERING_WORLD")
 f4:SetScript("OnEvent", function(self, event)

@@ -10,8 +10,11 @@
 LibStub/LibStub.lua
 Libs/DRList-1.0/DRList-1.0.xml
 
-DrTracker.lua
-FrameManager.lua
-Main.lua
-OptionsPanel.lua
+Core/DRs/UnitDRs.lua
+Core/DRs/DrTracker.lua
+Core/Frames/Ring.lua
+Core/Frames/Border.lua
+Core/Frames/FrameManager.lua
+Core/Main.lua
+Core/OptionsPanel.lua
 ActionBar_DRs.lua

@@ -16,9 +16,8 @@ function DrTracker:AddDr(unitGUID, category, ccDuration)
     
     local drs = self.unitDRs[unitGUID]
     local drDuration = DrList:GetResetTime(category)
-    local expirationTime = GetTime() + drDuration + ccDuration
 
-    drs:Refresh(category, expirationTime)
+    drs:Refresh(category, ccDuration, drDuration)
 end
 
 function DrTracker:GetDrInfo(unitGUID, spellId)
@@ -34,7 +33,7 @@ function DrTracker:GetDrInfo(unitGUID, spellId)
 
     local level = drs[category].level
     local appliedTime = drs[category].appliedTime
-    local remainingDrTime = drs[category].expirationTime - GetTime()
+    local remainingDrTime = drs[category].expirationTime - appliedTime
     if remainingDrTime < 0 then remainingDrTime = 0 end
     return level, appliedTime, remainingDrTime
 end
@@ -45,8 +44,10 @@ function DrTracker:ShortenDr(unitGUID, category)
     end
 
     local drs = self.unitDRs[unitGUID]
+    drs:Update(category)
     local drDuration = DrList:GetResetTime(category)
-    local expirationTime = GetTime() + drDuration
 
-    drs:Shorten(category, expirationTime)
+    local isThereALongerCc = GetTime() + drs[category].ccDuration  + drDuration < drs[category].expirationTime
+    if isThereALongerCc then return end
+    drs:Shorten(category, drDuration)
 end

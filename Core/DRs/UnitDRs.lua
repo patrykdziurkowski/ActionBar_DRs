@@ -14,16 +14,27 @@ function UnitDRs:New(o)
 
     local categories = DrList:GetCategories()
     for category, _ in pairs(categories) do
-        o[category] = { level = 0, appliedTime = 0, expirationTime = 0 }
+        o[category] = {
+            level = 0,
+            appliedTime = 0,
+            ccDuration = 0,
+            drDuration = 0,
+            expirationTime = 0
+        }
     end
 
     return o
 end
 
-function UnitDRs:Refresh(category, expirationTime)
+function UnitDRs:Refresh(category, ccDuration, drDuration)
     self:Update(category)
 
-    self[category].appliedTime = GetTime()
+    local appliedTime = GetTime()
+    local expirationTime = appliedTime + ccDuration + drDuration
+
+    self[category].appliedTime = appliedTime
+    self[category].ccDuration = ccDuration
+    self[category].drDuration = drDuration
     -- In rare (?) cases where you can overlap a long CC with a shorter one,
     -- keep the bigger expiration time. Example: Sap -> immediate Gouge
     if self[category].expirationTime < expirationTime then
@@ -39,14 +50,20 @@ function UnitDRs:Update(category)
     local remainingDrTime = self[category].expirationTime - GetTime()
     if remainingDrTime < 0 then
         self[category].level = 0
-        self[category].expirationTime = 0
         self[category].appliedTime = 0
+        self[category].ccDuration = 0
+        self[category].drDuration = 0
+        self[category].expirationTime = 0
     end
 end
 
-function UnitDRs:Shorten(category, expirationTime)
+function UnitDRs:Shorten(category, drDuration)
     self:Update(category)
 
-    self[category].appliedTime = GetTime()
-    self[category].expirationTime = expirationTime
+    local appliedTime = GetTime()
+
+    self[category].appliedTime = appliedTime
+    self[category].ccDuration = 0
+    self[category].drDuration = drDuration
+    self[category].expirationTime = appliedTime + drDuration
 end

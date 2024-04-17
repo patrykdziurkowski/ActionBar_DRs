@@ -33,7 +33,7 @@ function DrTracker:GetDrInfo(unitGUID, spellId)
 
     local level = drs[category].level
     local appliedTime = drs[category].appliedTime
-    local remainingDrTime = drs[category].expirationTime - appliedTime
+    local remainingDrTime = drs[category].expirationTime - GetTime()
     if remainingDrTime < 0 then remainingDrTime = 0 end
     return level, appliedTime, remainingDrTime
 end

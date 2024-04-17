@@ -129,13 +129,15 @@ end
 function AddOn:DisplayDrIndicators(targetGUID)
     for _, button in pairs(AddOn.buttons) do
         local actionId = button:GetActionId()
-        local type, spellId, subtype = GetActionInfo(actionId)
-        if type == "spell" or type == "macro" and subtype == "spell" then
-            local level, appliedTime, remainingTime = DrTracker:GetDrInfo(targetGUID, spellId)
-            if level == 0 then
-                FrameManager:HideBorder(button)
-            else
-                FrameManager:ShowBorder(button, level, appliedTime, GetTime() + remainingTime, UserSettings.size, UserSettings.color, UserSettings.alpha, UserSettings.texture.path)
+        if actionId ~= nil then
+            local type, spellId, subtype = GetActionInfo(actionId)
+            if type == "spell" or type == "macro" and subtype == "spell" then
+                local level, appliedTime, remainingTime = DrTracker:GetDrInfo(targetGUID, spellId)
+                if level == 0 then
+                    FrameManager:HideBorder(button)
+                else
+                    FrameManager:ShowBorder(button, level, appliedTime, GetTime() + remainingTime, UserSettings.size, UserSettings.color, UserSettings.alpha, UserSettings.texture.path)
+                end
             end
         end
     end

@@ -20,8 +20,8 @@ do
     -- IMPLEMENTATIONS
     ----------------------------------------------
     local function ShowBorder(self, button, level, appliedTime, expirationTime, size, color, alpha, texturePath)
-        if button.dr == nil then button.dr = Border:New(button, size, color, alpha, texturePath) end
-        local border = button.dr
+        if button.ActionBar_DRs == nil then button.ActionBar_DRs = Border:New(button, size, color, alpha, texturePath) end
+        local border = button.ActionBar_DRs
         border:PauseExistingAnimations()
         border:Show(level, appliedTime, expirationTime)
         border:StartExpirationTimer(expirationTime)
@@ -29,37 +29,37 @@ do
     FrameManager.ShowBorder = ShowBorder
 
     local function HideBorder(self, button)
-        if button.dr == nil then return end
+        if button.ActionBar_DRs == nil then return end
 
-        local border = button.dr
+        local border = button.ActionBar_DRs
         border:Hide()
     end
     FrameManager.HideBorder = HideBorder
 
     local function ChangeSize(self, button, size)
-        if button.dr == nil then return end
-        local border = button.dr
+        if button.ActionBar_DRs == nil then return end
+        local border = button.ActionBar_DRs
         border:ChangeSize(size)
     end
     FrameManager.ChangeSize = ChangeSize
 
     local function ChangeBorderColor(self, button, color)
-        if button.dr == nil then return end
-        local border = button.dr
+        if button.ActionBar_DRs == nil then return end
+        local border = button.ActionBar_DRs
         border:ChangeColor(color)
     end
     FrameManager.ChangeBorderColor = ChangeBorderColor
 
     local function ChangeCooldownAlpha(self, button, alpha)
-        if button.dr == nil then return end
-        local border = button.dr
+        if button.ActionBar_DRs == nil then return end
+        local border = button.ActionBar_DRs
         border:ChangeAlpha(alpha)
     end
     FrameManager.ChangeCooldownAlpha = ChangeCooldownAlpha
 
     local function ChangeBorderTexture(self, button, texturePath)
-        if button.dr == nil then return end
-        local border = button.dr
+        if button.ActionBar_DRs == nil then return end
+        local border = button.ActionBar_DRs
         border:ChangeTexture(texturePath)
     end
     FrameManager.ChangeBorderTexture = ChangeBorderTexture

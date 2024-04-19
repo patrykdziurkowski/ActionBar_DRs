@@ -4,6 +4,7 @@
         "UIDropDownMenu_SetText",
         "UIDropDownMenu_SetWidth",
         "UIDropDownMenu_Initialize",
-        "UIDropDownMenu_AddButton"
+        "UIDropDownMenu_AddButton",
+        "Add"
     ]
 }

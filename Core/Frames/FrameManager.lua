@@ -7,41 +7,60 @@ Border = Border
     FRAME MANAGER
 ]]--
 FrameManager = {}
-function FrameManager:ShowBorder(button, level, appliedTime, expirationTime, size, color, alpha, texturePath)
-    if button.dr == nil then button.dr = Border:New(button, size, color, alpha, texturePath) end
-    local border = button.dr
-    border:PauseExistingAnimations()
-    border:Show(level, appliedTime, expirationTime)
-    border:StartExpirationTimer(expirationTime)
-end
+do
+    -- public methods
+    function FrameManager:ShowBorder(button, level, appliedTime, expirationTime, size, color, alpha, texturePath) end
+    function FrameManager:HideBorder(button) end
+    function FrameManager:ChangeSize(button, size) end
+    function FrameManager:ChangeBorderColor(button, color) end
+    function FrameManager:ChangeCooldownAlpha(button, alpha) end
+    function FrameManager:ChangeBorderTexture(button, texturePath) end
 
-function FrameManager:HideBorder(button)
-    if button.dr == nil then return end
+    ----------------------------------------------
+    -- IMPLEMENTATIONS
+    ----------------------------------------------
+    local function ShowBorder(self, button, level, appliedTime, expirationTime, size, color, alpha, texturePath)
+        if button.dr == nil then button.dr = Border:New(button, size, color, alpha, texturePath) end
+        local border = button.dr
+        border:PauseExistingAnimations()
+        border:Show(level, appliedTime, expirationTime)
+        border:StartExpirationTimer(expirationTime)
+    end
+    FrameManager.ShowBorder = ShowBorder
 
-    local border = button.dr
-    border:Hide()
-end
+    local function HideBorder(self, button)
+        if button.dr == nil then return end
 
-function FrameManager:ChangeSize(button, size)
-    if button.dr == nil then return end
-    local border = button.dr
-    border:ChangeSize(size)
-end
+        local border = button.dr
+        border:Hide()
+    end
+    FrameManager.HideBorder = HideBorder
 
-function FrameManager:ChangeBorderColor(button, color)
-    if button.dr == nil then return end
-    local border = button.dr
-    border:ChangeColor(color)
-end
+    local function ChangeSize(self, button, size)
+        if button.dr == nil then return end
+        local border = button.dr
+        border:ChangeSize(size)
+    end
+    FrameManager.ChangeSize = ChangeSize
 
-function FrameManager:ChangeCooldownAlpha(button, alpha)
-    if button.dr == nil then return end
-    local border = button.dr
-    border:ChangeAlpha(alpha)
-end
+    local function ChangeBorderColor(self, button, color)
+        if button.dr == nil then return end
+        local border = button.dr
+        border:ChangeColor(color)
+    end
+    FrameManager.ChangeBorderColor = ChangeBorderColor
 
-function FrameManager:ChangeBorderTexture(button, texturePath)
-    if button.dr == nil then return end
-    local border = button.dr
-    border:ChangeTexture(texturePath)
+    local function ChangeCooldownAlpha(self, button, alpha)
+        if button.dr == nil then return end
+        local border = button.dr
+        border:ChangeAlpha(alpha)
+    end
+    FrameManager.ChangeCooldownAlpha = ChangeCooldownAlpha
+
+    local function ChangeBorderTexture(self, button, texturePath)
+        if button.dr == nil then return end
+        local border = button.dr
+        border:ChangeTexture(texturePath)
+    end
+    FrameManager.ChangeBorderTexture = ChangeBorderTexture
 end

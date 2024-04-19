@@ -11,9 +11,6 @@ do
     -- public fields
     Border.rings = {}
 
-    -- private fields
-    local _border = {}
-
     -- public methods
     function Border:New(button, borderSize, color, alpha, texturePath) end
     function Border:Show(level, appliedTime, expirationTime) end
@@ -27,7 +24,7 @@ do
     function Border:ForEachRing(func) end
 
     -- private methods
-    function _border:CalculateSize(size, ringLevel) end
+    function Border:_CalculateSize(size, ringLevel) end
 
     ----------------------------------------------
     -- IMPLEMENTATIONS
@@ -38,12 +35,10 @@ do
 
         setmetatable(border, self)
         self.__index = self
-        setmetatable(_border, border)
-        border.__index = border
 
         --reverse rendering order to make sure they're z-ordered properly
         for i = 2, 0, -1 do
-            local size = _border:CalculateSize(borderSize, i)
+            local size = self:_CalculateSize(borderSize, i)
             local ring = Ring:New(button, size, i, color, alpha, texturePath)
             border.rings[i] = ring
         end
@@ -94,7 +89,7 @@ do
 
     local function ChangeSize(self, borderSize)
         for i = 2, 0, -1 do
-            local size = _border:CalculateSize(borderSize, i)
+            local size = self:_CalculateSize(borderSize, i)
             self.rings[i]:ChangeSize(size)
         end
     end
@@ -133,8 +128,8 @@ do
     end
     Border.ForEachRing = ForEachRing
 
-    local function CalculateSize(self, size, ringLevel)
+    local function _CalculateSize(self, size, ringLevel)
         return size - ringLevel * size / 5
     end
-    _border.CalculateSize = CalculateSize
+    Border._CalculateSize = _CalculateSize
 end

@@ -14,17 +14,18 @@ UserSettings = UserSettings
 ]]--
 OptionsPanel = {}
 do
-    -- private fields
-    local _OptionsPanel = {}
-    _OptionsPanel.isTestModeEnabled = false
+    -- public fields
+    OptionsPanel.isTestModeEnabled = false
 
     -- public methods
     function OptionsPanel:Create() end
-    function OptionsPanel:CreateSizeSlider() end
-    function OptionsPanel:CreateAlphaSlider() end
-    function OptionsPanel:CreateTextureDropDown() end
-    function OptionsPanel:CreateTestToggle() end
-    function OptionsPanel:CreateColorChange() end
+
+    -- private methods
+    function OptionsPanel:_CreateSizeSlider() end
+    function OptionsPanel:_CreateAlphaSlider() end
+    function OptionsPanel:_CreateTextureDropDown() end
+    function OptionsPanel:_CreateTestToggle() end
+    function OptionsPanel:_CreateColorChange() end
 
     ----------------------------------------------
     -- IMPLEMENTATIONS
@@ -38,15 +39,15 @@ do
         title:SetPoint("TOP", 0, -25)
         title:SetText("ActionBar_DRs")
 
-        self:CreateSizeSlider()
-        self:CreateAlphaSlider()
-        self:CreateTestToggle()
-        self:CreateColorChange()
-        self:CreateTextureDropDown()
+        self:_CreateSizeSlider()
+        self:_CreateAlphaSlider()
+        self:_CreateTestToggle()
+        self:_CreateColorChange()
+        self:_CreateTextureDropDown()
     end
     OptionsPanel.Create = Create
 
-    local function CreateSizeSlider(self)
+    local function _CreateSizeSlider(self)
         local sizeSliderName = "ActionBar_DRs_SizeSlider"
         local sizeSlider = CreateFrame("Slider", sizeSliderName, self.panel, "OptionsSliderTemplate")
         sizeSlider:SetMinMaxValues(30, 250)
@@ -61,7 +62,7 @@ do
             self.text:SetText("Button Border Size: " .. value)
             UserSettings.size = value
             for _, button in pairs(AddOn.buttons) do
-                FrameManager:ChangeSize(button, value)
+                button.ActionBar_DRs:ChangeSize(value)
             end
         end)
         local min, max = sizeSlider:GetMinMaxValues()
@@ -69,9 +70,9 @@ do
         sizeSlider.textHigh:SetText(max)
         sizeSlider:SetPoint("TOP", 0, -75)
     end
-    OptionsPanel.CreateSizeSlider = CreateSizeSlider
+    OptionsPanel._CreateSizeSlider = _CreateSizeSlider
 
-    local function CreateAlphaSlider(self)
+    local function _CreateAlphaSlider(self)
         local alphaSliderName = "ActionBar_DRs_AlphaSlider"
         local alphaSlider = CreateFrame("Slider", alphaSliderName, self.panel, "OptionsSliderTemplate")
         alphaSlider:SetMinMaxValues(0, 1)
@@ -87,7 +88,7 @@ do
             self.text:SetText("Cooldown Widget Alpha: " .. value)
             UserSettings.alpha = value
             for _, button in pairs(AddOn.buttons) do
-                FrameManager:ChangeCooldownAlpha(button, value)
+                button.ActionBar_DRs:ChangeCooldownAlpha(value)
             end
         end)
         local min, max = alphaSlider:GetMinMaxValues()
@@ -95,9 +96,9 @@ do
         alphaSlider.textHigh:SetText(max)
         alphaSlider:SetPoint("TOP", 0, -125)
     end
-    OptionsPanel.CreateAlphaSlider = CreateAlphaSlider
+    OptionsPanel._CreateAlphaSlider = _CreateAlphaSlider
 
-    local function CreateTextureDropDown(self)
+    local function _CreateTextureDropDown(self)
         local textureDropDownName = "ActionBar_DRs_TextureDropdown"
         local textureDropDown = CreateFrame("Frame", textureDropDownName, self.panel, "UIDropDownMenuTemplate")
         textureDropDown:SetPoint("TOP", 0, -175)
@@ -110,7 +111,7 @@ do
                 for _, button in pairs(AddOn.buttons) do
                     UserSettings.texture.name = optionText
                     UserSettings.texture.path = texturePath
-                    FrameManager:ChangeBorderTexture(button, texturePath)
+                    button.ActionBar_DRs:ChangeBorderTexture(texturePath)
                 end
             end
 
@@ -130,34 +131,34 @@ do
             })
         end)
     end
-    OptionsPanel.CreateTextureDropDown = CreateTextureDropDown
+    OptionsPanel._CreateTextureDropDown = _CreateTextureDropDown
 
-    local function CreateTestToggle(self)
+    local function _CreateTestToggle(self)
         local testToggleName = "ActionBar_DRs_TestToggle"
         local testToggle = CreateFrame("Button", testToggleName, self.panel, "UIPanelButtonTemplate")
         testToggle:SetText("Toggle Test Borders")
         testToggle:SetSize(150, 40)
         testToggle:SetPoint("TOP", 0, -225)
         testToggle:SetScript("OnClick", function()
-            _OptionsPanel.isTestModeEnabled = not _OptionsPanel.isTestModeEnabled
+            self.isTestModeEnabled = not self.isTestModeEnabled
 
-            if _OptionsPanel.isTestModeEnabled then
+            if self.isTestModeEnabled then
                 for _, button in pairs(AddOn.buttons) do
-                    FrameManager:ShowBorder(button, math.random(4) - 1, GetTime() - math.random(10) - 1, GetTime() + 25 + math.random(5), UserSettings.size, UserSettings.color, UserSettings.alpha, UserSettings.texture.path)
+                    button.ActionBar_DRs:ShowBorder(math.random(4) - 1, GetTime() - math.random(10) - 1, GetTime() + 25 + math.random(5))
                     C_Timer.After(30, function()
-                        _OptionsPanel.isTestModeEnabled = false
+                        self.isTestModeEnabled = false
                     end)
                 end
             else
                 for _, button in pairs(AddOn.buttons) do
-                    FrameManager:HideBorder(button)
+                    button.ActionBar_DRs:HideBorder()
                 end
             end
         end)
     end
-    OptionsPanel.CreateTestToggle = CreateTestToggle
+    OptionsPanel._CreateTestToggle = _CreateTestToggle
 
-    local function CreateColorChange(self)
+    local function _CreateColorChange(self)
         local colorChangeName = "ActionBar_DRs_ColorChange"
         local colorChange = CreateFrame("Button", colorChangeName, self.panel, "UIPanelButtonTemplate")
         colorChange:SetText("Change Color")
@@ -177,17 +178,17 @@ do
                 swatchFunc = function()
                     color.r, color.g, color.b = ColorPickerFrame:GetColorRGB()
                     for _, button in pairs(AddOn.buttons) do
-                        FrameManager:ChangeBorderColor(button, color)
+                        button.ActionBar_DRs:ChangeBorderColor(color)
                     end
                 end,
                 cancelFunc = function(previousValues)
                     color.r, color.g, color.b = unpack(previousValues)
                     for _, button in pairs(AddOn.buttons) do
-                        FrameManager:ChangeBorderColor(button, color)
+                        button.ActionBar_DRs:ChangeBorderColor(color)
                     end
                 end
             })
         end)
     end
-    OptionsPanel.CreateColorChange = CreateColorChange
+    OptionsPanel._CreateColorChange = _CreateColorChange
 end

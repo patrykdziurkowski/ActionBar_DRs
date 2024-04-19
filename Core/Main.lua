@@ -17,11 +17,6 @@ do
     -- public fields
     AddOn.buttons = {}
 
-    -- private fields
-    local _AddOn = {}
-    setmetatable(_AddOn, AddOn)
-    AddOn.__index = AddOn
-
     -- public methods
     function AddOn:HookButtons() end
     function AddOn:CcCasted(targetGUID, spellId, category) end
@@ -29,22 +24,26 @@ do
     function AddOn:UpdateFrames() end
 
     -- private methods
-    function _AddOn:HookBartender4Buttons() end
-    function _AddOn:HookElvUIButtons() end
-    function _AddOn:HookDefaultButtons() end
-    function _AddOn:DisplayDrIndicators(targetGUID) end
-    function _AddOn:HideDrIndicators() end
+    function AddOn:_HookBartender4Buttons() end
+    function AddOn:_HookElvUIButtons() end
+    function AddOn:_HookDefaultButtons() end
+    function AddOn:_DisplayDrIndicators(targetGUID) end
+    function AddOn:_HideDrIndicators() end
 
     ----------------------------------------------
     -- IMPLEMENTATIONS
     ----------------------------------------------
     local function HookButtons(self)
         if IsAddOnLoaded("Bartender4") then
-            _AddOn:HookBartender4Buttons()
+            self:_HookBartender4Buttons()
         elseif IsAddOnLoaded("ElvUI") then
-            _AddOn:HookElvUIButtons()
+            self:_HookElvUIButtons()
         else
-            _AddOn:HookDefaultButtons()
+            self:_HookDefaultButtons()
+        end
+
+        for _, button in pairs(self.buttons) do
+            button.ActionBar_DRs = FrameManager:New(button, UserSettings.size, UserSettings.color, UserSettings.alpha, UserSettings.texture.path)
         end
     end
     AddOn.HookButtons = HookButtons
@@ -91,13 +90,13 @@ do
     local function UpdateFrames(self)
         local targetGUID = UnitGUID("target")
 
-        if targetGUID == nil then _AddOn:HideDrIndicators() return end
-        _AddOn:DisplayDrIndicators(targetGUID)
+        if targetGUID == nil then AddOn:_HideDrIndicators() return end
+        AddOn:_DisplayDrIndicators(targetGUID)
     end
     AddOn.UpdateFrames = UpdateFrames
 
     -- private
-    local function DisplayDrIndicators(self, targetGUID)
+    local function _DisplayDrIndicators(self, targetGUID)
         for _, button in pairs(self.buttons) do
             local actionId = button:GetActionId()
             if actionId ~= nil then
@@ -105,24 +104,24 @@ do
                 if type == "spell" or type == "macro" and subtype == "spell" then
                     local level, appliedTime, remainingTime = DrTracker:GetDrInfo(targetGUID, spellId)
                     if level == 0 then
-                        FrameManager:HideBorder(button)
+                        button.ActionBar_DRs:HideBorder()
                     else
-                        FrameManager:ShowBorder(button, level, appliedTime, GetTime() + remainingTime, UserSettings.size, UserSettings.color, UserSettings.alpha, UserSettings.texture.path)
+                        button.ActionBar_DRs:ShowBorder(level, appliedTime, GetTime() + remainingTime)
                     end
                 end
             end
         end
     end
-    _AddOn.DisplayDrIndicators = DisplayDrIndicators
+    AddOn._DisplayDrIndicators = _DisplayDrIndicators
 
-    local function HideDrIndicators(self)
+    local function _HideDrIndicators(self)
         for _, button in pairs(self.buttons) do
-            FrameManager:HideBorder(button)
+            button.ActionBar_DRs:HideBorder()
         end
     end
-    _AddOn.HideDrIndicators = HideDrIndicators
+    AddOn._HideDrIndicators = _HideDrIndicators
 
-    local function HookBartender4Buttons(self)
+    local function _HookBartender4Buttons(self)
         for i = 1, 360 do 
             local button = _G["BT4Button"..i]
             if button ~= nil then
@@ -134,9 +133,9 @@ do
             end
         end
     end
-    _AddOn.HookBartender4Buttons = HookBartender4Buttons
+    AddOn._HookBartender4Buttons = _HookBartender4Buttons
 
-    local function HookElvUIButtons(self)
+    local function _HookElvUIButtons(self)
         for i = 1, 15 do
             for j = 1, 12 do
                 local button = _G["ElvUI_Bar" .. i .. "Button" .. j]
@@ -150,9 +149,9 @@ do
             end
         end
     end
-    _AddOn.HookElvUIButtons = HookElvUIButtons
+    AddOn._HookElvUIButtons = _HookElvUIButtons
 
-    local function HookDefaultButtons(self)
+    local function _HookDefaultButtons(self)
         for i = 1, 12 do
             if _G["ActionButton"..i] ~= nil then
                 table.insert(self.buttons, _G["ActionButton"..i])
@@ -181,7 +180,7 @@ do
             end
         end
     end
-    _AddOn.HookDefaultButtons = HookDefaultButtons
+    AddOn._HookDefaultButtons = _HookDefaultButtons
 end
 
 

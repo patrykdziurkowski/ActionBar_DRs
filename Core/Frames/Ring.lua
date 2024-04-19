@@ -33,8 +33,7 @@ end
 --[[
     RING
 ]]--
-Ring = {}
-do
+Ring = {} do
     -- public fields
     Ring.edge = nil
     Ring.cooldown = nil

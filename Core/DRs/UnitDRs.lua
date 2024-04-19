@@ -9,7 +9,7 @@ local DrList = LibStub:GetLibrary("DRList-1.0")
 UnitDRs = {}
 do
     -- public methods
-    function UnitDRs:New(o) end
+    function UnitDRs:New() end
     function UnitDRs:Refresh(category, ccDuration, drDuration) end
     function UnitDRs:Update(category) end
     function UnitDRs:Shorten(category, drDuration)  end

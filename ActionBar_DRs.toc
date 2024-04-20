@@ -2,7 +2,7 @@
 ## Title: ActionBar DRs
 ## Notes: An addon that tracks a target's CC diminishing returns on your action bar buttons.
 ## Author: Faxmetus-ArgentDawn (EU)
-## Version: 0.1
+## Version: 1
 ## DefaultState: enabled
 ## IconTexture: interface\icons\ability_cheapshot
 ## SavedVariables: UserSettings

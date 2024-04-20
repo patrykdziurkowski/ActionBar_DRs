@@ -1,13 +1,16 @@
 --[[
     DEPENDENCIES
 ]]--
+local addonName, addon = ...
+
 local DrList = LibStub:GetLibrary("DRList-1.0")
-UnitDRs = UnitDRs
+local UnitDRs = addon.UnitDRs
 
 --[[ 
     DR TRACKER
 ]]--
-DrTracker = {}
+local DrTracker = {}
+addon.DrTracker = DrTracker
 do
     -- public fields
     DrTracker.unitDRs = {}

@@ -1,12 +1,15 @@
 --[[
     DEPENDENCIES
 ]]--
+local addonName, addon = ...
+
 local DrList = LibStub:GetLibrary("DRList-1.0")
 
 --[[ 
     UNIT DRS
 ]]--
-UnitDRs = {}
+local UnitDRs = {}
+addon.UnitDRs = UnitDRs
 do
     -- public methods
     function UnitDRs:New() end

@@ -5,6 +5,10 @@
         "UIDropDownMenu_SetWidth",
         "UIDropDownMenu_Initialize",
         "UIDropDownMenu_AddButton",
-        "Add"
+        "Add",
+        "ColorPickerFrame",
+        "InterfaceOptions_AddCategory",
+        "SlashCmdList",
+        "InterfaceOptionsFrame_OpenToCategory"
     ]
 }

@@ -1,12 +1,14 @@
 --[[
     DEPENDENCIES
 ]]--
+local addonName, addon = ...
+
 local DrList = LibStub:GetLibrary("DRList-1.0")
-AddOn = AddOn
-OptionsPanel = OptionsPanel
-SlashCmdList = SlashCmdList
-InterfaceOptionsFrame_OpenToCategory = InterfaceOptionsFrame_OpenToCategory
-UserSettings = UserSettings
+local AddOn = addon.AddOn
+local OptionsPanel = addon.OptionsPanel
+local SlashCmdList = SlashCmdList
+local InterfaceOptionsFrame_OpenToCategory = InterfaceOptionsFrame_OpenToCategory
+ABDRs_UserSettings = ABDRs_UserSettings
 
 
 
@@ -34,8 +36,8 @@ local f3 = CreateFrame("Frame")
 f3:RegisterEvent("ADDON_LOADED")
 f3:SetScript("OnEvent", function(self, event, addOnName)
     if addOnName ~= "ActionBar_DRs" then return end
-    if UserSettings == nil then
-        UserSettings = {
+    if ABDRs_UserSettings == nil then
+        ABDRs_UserSettings = {
             size = 60,
             alpha = 1,
             color = {

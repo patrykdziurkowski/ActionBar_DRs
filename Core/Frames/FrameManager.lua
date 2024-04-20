@@ -1,12 +1,15 @@
 --[[
     DEPENDENCIES
 ]]--
-Border = Border
+local addonName, addon = ...
+
+local Border = addon.Border
 
 --[[
     FRAME MANAGER
 ]]--
-FrameManager = {}
+local FrameManager = {}
+addon.FrameManager = FrameManager
 do
     -- public methods
     function FrameManager:New(button, size, color, alpha, texturePath) end

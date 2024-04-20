@@ -1,3 +1,5 @@
+local addonName, addon = ...
+
 local Edge = {}
 do
     function Edge:New(button, size, color, texturePath)
@@ -33,7 +35,9 @@ end
 --[[
     RING
 ]]--
-Ring = {} do
+local Ring = {}
+addon.Ring = Ring
+do
     -- public fields
     Ring.edge = nil
     Ring.cooldown = nil

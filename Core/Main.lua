@@ -1,10 +1,12 @@
 --[[
     DEPENDENCIES
 ]]--
+local addonName, addon = ...
+
 local DrList = LibStub:GetLibrary("DRList-1.0")
-DrTracker = DrTracker
-FrameManager = FrameManager
-UserSettings = UserSettings
+local DrTracker = addon.DrTracker
+local FrameManager = addon.FrameManager
+ABDRs_UserSettings = ABDRs_UserSettings
 
 
 
@@ -12,7 +14,8 @@ UserSettings = UserSettings
 --[[
     MAIN ADDON LOGIC
 ]]--
-AddOn = {}
+local AddOn = {}
+addon.AddOn = AddOn
 do
     -- public fields
     AddOn.buttons = {}
@@ -43,7 +46,7 @@ do
         end
 
         for _, button in pairs(self.buttons) do
-            button.ActionBar_DRs = FrameManager:New(button, UserSettings.size, UserSettings.color, UserSettings.alpha, UserSettings.texture.path)
+            button.ActionBar_DRs = FrameManager:New(button, ABDRs_UserSettings.size, ABDRs_UserSettings.color, ABDRs_UserSettings.alpha, ABDRs_UserSettings.texture.path)
         end
     end
     AddOn.HookButtons = HookButtons

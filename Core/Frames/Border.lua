@@ -1,12 +1,15 @@
 --[[
     DEPDENDENCIES
 ]]--
-Ring = Ring
+local addonName, addon = ...
+
+local Ring = addon.Ring
 
 --[[
     BORDER
 ]]--
-Border = {}
+local Border = {}
+addon.Border = Border
 do
     -- public fields
     Border.rings = {}

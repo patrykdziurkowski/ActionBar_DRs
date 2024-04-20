@@ -5,7 +5,7 @@
 ## Version: 1
 ## DefaultState: enabled
 ## IconTexture: interface\icons\ability_cheapshot
-## SavedVariables: UserSettings
+## SavedVariables: ABDRs_UserSettings
 
 LibStub/LibStub.lua
 Libs/DRList-1.0/DRList-1.0.xml

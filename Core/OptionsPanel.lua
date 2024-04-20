@@ -1,18 +1,20 @@
 --[[
     DEPENDENCIES
 ]]--
-FrameManager = FrameManager
-AddOn = AddOn
-ColorPickerFrame = ColorPickerFrame
-InterfaceOptions_AddCategory = InterfaceOptions_AddCategory
-UserSettings = UserSettings
+local addonName, addon = ...
+
+local AddOn = addon.AddOn
+local ColorPickerFrame = ColorPickerFrame
+local InterfaceOptions_AddCategory = InterfaceOptions_AddCategory
+ABDRs_UserSettings = ABDRs_UserSettings
 
 
 
 --[[
     OPTIONS PANEL
 ]]--
-OptionsPanel = {}
+local OptionsPanel = {}
+addon.OptionsPanel = OptionsPanel
 do
     -- public fields
     OptionsPanel.isTestModeEnabled = false
@@ -51,7 +53,7 @@ do
         local sizeSliderName = "ActionBar_DRs_SizeSlider"
         local sizeSlider = CreateFrame("Slider", sizeSliderName, self.panel, "OptionsSliderTemplate")
         sizeSlider:SetMinMaxValues(30, 250)
-        sizeSlider:SetValue(UserSettings.size)
+        sizeSlider:SetValue(ABDRs_UserSettings.size)
         sizeSlider:SetValueStep(1)
         sizeSlider:SetObeyStepOnDrag(true)
         sizeSlider.text = _G[sizeSliderName.."Text"]
@@ -60,7 +62,7 @@ do
         sizeSlider.text:SetText("Button Border Size: " .. sizeSlider:GetValue())
         sizeSlider:SetScript("OnValueChanged", function(self, value)
             self.text:SetText("Button Border Size: " .. value)
-            UserSettings.size = value
+            ABDRs_UserSettings.size = value
             for _, button in pairs(AddOn.buttons) do
                 button.ActionBar_DRs:ChangeSize(value)
             end
@@ -76,7 +78,7 @@ do
         local alphaSliderName = "ActionBar_DRs_AlphaSlider"
         local alphaSlider = CreateFrame("Slider", alphaSliderName, self.panel, "OptionsSliderTemplate")
         alphaSlider:SetMinMaxValues(0, 1)
-        alphaSlider:SetValue(UserSettings.alpha)
+        alphaSlider:SetValue(ABDRs_UserSettings.alpha)
         alphaSlider:SetValueStep(0.01)
         alphaSlider:SetObeyStepOnDrag(true)
         alphaSlider.text = _G[alphaSliderName.."Text"]
@@ -86,7 +88,7 @@ do
         alphaSlider:SetScript("OnValueChanged", function(self, value)
             value = math.floor(value * 100) / 100
             self.text:SetText("Cooldown Widget Alpha: " .. value)
-            UserSettings.alpha = value
+            ABDRs_UserSettings.alpha = value
             for _, button in pairs(AddOn.buttons) do
                 button.ActionBar_DRs:ChangeCooldownAlpha(value)
             end
@@ -102,15 +104,15 @@ do
         local textureDropDownName = "ActionBar_DRs_TextureDropdown"
         local textureDropDown = CreateFrame("Frame", textureDropDownName, self.panel, "UIDropDownMenuTemplate")
         textureDropDown:SetPoint("TOP", 0, -175)
-        UIDropDownMenu_SetText(textureDropDown, UserSettings.texture.name)
+        UIDropDownMenu_SetText(textureDropDown, ABDRs_UserSettings.texture.name)
         UIDropDownMenu_SetWidth(textureDropDown, 150)
 
         UIDropDownMenu_Initialize(textureDropDown, function()
             local OptionClicked = function(self, optionText, texturePath, checked)
                 UIDropDownMenu_SetText(textureDropDown, optionText)
                 for _, button in pairs(AddOn.buttons) do
-                    UserSettings.texture.name = optionText
-                    UserSettings.texture.path = texturePath
+                    ABDRs_UserSettings.texture.name = optionText
+                    ABDRs_UserSettings.texture.path = texturePath
                     button.ActionBar_DRs:ChangeBorderTexture(texturePath)
                 end
             end
@@ -119,14 +121,14 @@ do
                 text = "Square",
                 arg1 = "Square",
                 arg2 = "interface\\addons\\actionbar_drs\\textures\\customsquare.png",
-                checked = UserSettings.texture.name == "Square",
+                checked = ABDRs_UserSettings.texture.name == "Square",
                 func = OptionClicked
             })
             UIDropDownMenu_AddButton({
                 text = "Octagon",
                 arg1 = "Octagon",
                 arg2 = "interface\\addons\\actionbar_drs\\textures\\lootgreatvault.png",
-                checked = UserSettings.texture.name == "Octagon",
+                checked = ABDRs_UserSettings.texture.name == "Octagon",
                 func = OptionClicked
             })
         end)
@@ -165,7 +167,7 @@ do
         colorChange:SetSize(125, 40)
         colorChange:SetPoint("TOP", 0, -275)
         colorChange:SetScript("OnClick", function()
-            local color = UserSettings.color
+            local color = ABDRs_UserSettings.color
             ColorPickerFrame:SetScript("OnShow", function()
                 ColorPickerFrame.previousValues = { color.r, color.g, color.b }
             end)

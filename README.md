@@ -3,6 +3,6 @@ A World of Warcraft **Retail** AddOn that tracks diminishing returns on crowd co
 ## Compatibility
 This AddOn works with the default Blizzard buttons, ElvUI, as well as Bartender4.
 ## Download
-TBD - for now you can just download this repository and paste it into `World of Warcraft\_retail_\Interface\AddOns\`
+Download from GitHub or [Curseforge](https://www.curseforge.com/wow/addons/actionbar_drs) either via the Curseforge app or by downloading it manually into `World of Warcraft\_retail_\Interface\AddOns\`
 ## Contributing guidelines
 Any fixes, feature suggestions, bug reports are welcome!

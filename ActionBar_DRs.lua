@@ -63,9 +63,9 @@ end)
 local f = CreateFrame("Frame")
 f:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 f:SetScript("OnEvent", function(self, event)
-    local _, subevent, _, casterGUID, _, _, _, targetGUID, _, _, _, spellId = CombatLogGetCurrentEventInfo()
+    local _, subevent, _, casterGUID, _, _, _, targetGUID, _, _, _, spellId, amount = CombatLogGetCurrentEventInfo()
 
-    if subevent == "SPELL_CAST_SUCCESS" then
+    if subevent == "SPELL_AURA_APPLIED" then
         -- if category is nil then it's not a CC so we skip
         local category = DrList:GetCategoryBySpellID(spellId)
         if category == nil then return end

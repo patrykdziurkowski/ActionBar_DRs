@@ -37,9 +37,9 @@ do
     -- IMPLEMENTATIONS
     ----------------------------------------------
     local function HookButtons(self)
-        if IsAddOnLoaded("Bartender4") then
+        if C_AddOns.IsAddOnLoaded("Bartender4") then
             self:_HookBartender4Buttons()
-        elseif IsAddOnLoaded("ElvUI") then
+        elseif C_AddOns.IsAddOnLoaded("ElvUI") then
             self:_HookElvUIButtons()
         else
             self:_HookDefaultButtons()

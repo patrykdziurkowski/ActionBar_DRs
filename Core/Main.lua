@@ -3,7 +3,7 @@
 ]]--
 local addonName, addon = ...
 
-local DrList = LibStub:GetLibrary("DRList-1.0")
+local DrList = addon.DrListWrapper
 local DrTracker = addon.DrTracker
 local FrameManager = addon.FrameManager
 ABDRs_UserSettings = ABDRs_UserSettings
@@ -22,6 +22,7 @@ do
 
     -- public methods
     function AddOn:HookButtons() end
+    function AddOn:ScanButtonsForCc() end
     function AddOn:CcCasted(targetGUID, spellId, category) end
     function AddOn:CcRemoved(targetGUID, category) end
     function AddOn:UpdateFrames() end
@@ -50,6 +51,16 @@ do
         end
     end
     AddOn.HookButtons = HookButtons
+
+    local function ScanButtonsForCc(self)
+        for _, button in pairs(self.buttons) do
+            local type, id = GetActionInfo(button:GetActionId())
+            if type == "spell" then
+                DrList:CheckIfSpellCc(id)
+            end
+        end
+    end
+    AddOn.ScanButtonsForCc = ScanButtonsForCc
 
     local function CcCasted(self, targetGUID, spellId, category)
         local spellName = GetSpellInfo(spellId)

@@ -3,7 +3,7 @@
 ]]--
 local addonName, addon = ...
 
-local DrList = LibStub:GetLibrary("DRList-1.0")
+local DrList = addon.DrListWrapper
 
 --[[ 
     UNIT DRS

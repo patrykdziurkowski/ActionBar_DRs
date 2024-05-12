@@ -3,7 +3,7 @@
 ]]--
 local addonName, addon = ...
 
-local DrList = LibStub:GetLibrary("DRList-1.0")
+local DrList = addon.DrListWrapper
 local UnitDRs = addon.UnitDRs
 
 --[[ 
@@ -40,7 +40,7 @@ do
         if self.unitDRs[unitGUID] == nil then return 0, 0, 0 end
 
         local drs = self.unitDRs[unitGUID]
-        local category = DrList:GetCategoryBySpellID(spellId)
+        local category = DrList:GetCategoryBySpellId(spellId)
         -- spell is not a cc
         if category == nil then return 0, 0, 0 end
 

@@ -3,7 +3,7 @@
 ]]--
 local addonName, addon = ...
 
-local DrList = LibStub:GetLibrary("DRList-1.0")
+local DrList = addon.DrListWrapper
 local AddOn = addon.AddOn
 local OptionsPanel = addon.OptionsPanel
 local SlashCmdList = SlashCmdList
@@ -30,6 +30,7 @@ local f4 = CreateFrame("Frame")
 f4:RegisterEvent("PLAYER_ENTERING_WORLD")
 f4:SetScript("OnEvent", function(self, event)
     AddOn:HookButtons()
+    AddOn:ScanButtonsForCc()
 end)
 
 local f3 = CreateFrame("Frame")
@@ -67,13 +68,13 @@ f:SetScript("OnEvent", function(self, event)
 
     if subevent == "SPELL_AURA_APPLIED" then
         -- if category is nil then it's not a CC so we skip
-        local category = DrList:GetCategoryBySpellID(spellId)
+        local category = DrList:GetCategoryBySpellId(spellId)
         if category == nil then return end
 
         AddOn:CcCasted(targetGUID, spellId, category)
     -- when cc gets removed (i.e. it expires, gets trinketed, it breaks, etc.)
     elseif subevent == "SPELL_AURA_REMOVED" then
-        local category = DrList:GetCategoryBySpellID(spellId)
+        local category = DrList:GetCategoryBySpellId(spellId)
         if category == nil then return end
 
         AddOn:CcRemoved(targetGUID, category)

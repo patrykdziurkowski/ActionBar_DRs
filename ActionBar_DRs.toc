@@ -10,6 +10,7 @@
 LibStub/LibStub.lua
 Libs/DRList-1.0/DRList-1.0.xml
 
+Core/DRs/DrListWrapper.lua
 Core/DRs/UnitDRs.lua
 Core/DRs/DrTracker.lua
 Core/Frames/Ring.lua

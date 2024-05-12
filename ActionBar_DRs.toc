@@ -1,4 +1,4 @@
-## Interface: 100206
+## Interface: 100207
 ## Title: ActionBar DRs
 ## Notes: An addon that tracks a target's CC diminishing returns on your action bar buttons.
 ## Author: Faxmetus-ArgentDawn (EU)

@@ -72,9 +72,10 @@ do
     local function _GetCategoryKeywords(self)
         local categoryKeywords = {}
         for categoryName, _ in pairs(self:GetCategories()) do
-            categoryKeywords[categoryName] = categoryName
+            if categoryName ~= "knockback" then
+                categoryKeywords[categoryName] = categoryName
+            end
         end
-        categoryKeywords["knockback"] = "knock"
 
         return categoryKeywords
     end

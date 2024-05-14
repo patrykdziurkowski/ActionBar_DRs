@@ -23,9 +23,11 @@ do
     function AddOn:CcCasted(targetGUID, spellId, category) end
     function AddOn:CcRemoved(targetGUID, category) end
     function AddOn:UpdateFrames() end
+    function AddOn:UpdateFramesForCategory(category) end
 
     -- private methods
     function AddOn:_DisplayDrIndicators(targetGUID) end
+    function AddOn:_DisplayDrIndicatorsForCategory(category, targetGUID) end
     function AddOn:_HideDrIndicators() end
 
     ----------------------------------------------
@@ -51,7 +53,7 @@ do
             local diminishFactor = DrList:GetNextDR(level, category)
             local ccDuration = 6 * diminishFactor
             DrTracker:AddDr(targetGUID, category, ccDuration)
-            self:UpdateFrames()
+            self:UpdateFramesForCategory(category)
             return
         end
 
@@ -67,14 +69,14 @@ do
             -- nil duration means someone's immuning the CC so dont extend it
             if duration == nil then return end
             DrTracker:AddDr(targetGUID, category, duration)
-            self:UpdateFrames()
+            self:UpdateFramesForCategory(category)
         end)
     end
     AddOn.CcCasted = CcCasted
 
     local function CcRemoved(self, targetGUID, category)
         DrTracker:ShortenDr(targetGUID, category)
-        self:UpdateFrames()
+        self:UpdateFramesForCategory(category)
     end
     AddOn.CcRemoved = CcRemoved
 
@@ -85,6 +87,14 @@ do
         AddOn:_DisplayDrIndicators(targetGUID)
     end
     AddOn.UpdateFrames = UpdateFrames
+
+    local function UpdateFramesForCategory(self, category)
+        local targetGUID = UnitGUID("target")
+
+        if targetGUID == nil then AddOn:_HideDrIndicators() return end
+        AddOn:_DisplayDrIndicatorsForCategory(category, targetGUID)
+    end
+    AddOn.UpdateFramesForCategory = UpdateFramesForCategory
 
     -- private
     local function _DisplayDrIndicators(self, targetGUID)
@@ -104,6 +114,24 @@ do
         end)
     end
     AddOn._DisplayDrIndicators = _DisplayDrIndicators
+
+    local function _DisplayDrIndicatorsForCategory(self, category, targetGUID)
+        ButtonManager:ForEachButtonInCategory(category, function(button)
+            local actionId = button:GetActionId()
+            if actionId ~= nil then
+                local type, spellId, subtype = GetActionInfo(actionId)
+                if type == "spell" or type == "macro" and subtype == "spell" then
+                    local level, appliedTime, remainingTime = DrTracker:GetDrInfo(targetGUID, spellId)
+                    if level == 0 then
+                        button.ActionBar_DRs:HideBorder()
+                    else
+                        button.ActionBar_DRs:ShowBorder(level, appliedTime, GetTime() + remainingTime)
+                    end
+                end
+            end
+        end)
+    end
+    AddOn._DisplayDrIndicatorsForCategory = _DisplayDrIndicatorsForCategory
 
     local function _HideDrIndicators(self)
         ButtonManager:ForEachButton(function(button)

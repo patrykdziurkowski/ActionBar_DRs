@@ -16,6 +16,7 @@ do
 
     -- public methods
     function ButtonManager:ForEachButton(func) end
+    function ButtonManager:ForEachButtonInCategory(category, func) end
     function ButtonManager:HookButtons() end
 
     -- private methods
@@ -35,6 +36,13 @@ do
         end
     end
     ButtonManager.ForEachButton = ForEachButton
+
+    local function ForEachButtonInCategory(self, category, func)
+        for key, button in pairs(self.buttons[category]) do
+            func(button)
+        end
+    end
+    ButtonManager.ForEachButtonInCategory = ForEachButtonInCategory
 
     local function HookButtons(self)
         for category, _ in pairs(DrList:GetCategories()) do

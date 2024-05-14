@@ -18,7 +18,7 @@ do
     function DrListWrapper:GetNextDR(diminished, category) end
 
     local extraTrackedCcSpells = {
-        [305483] = "stun", -- Lightning Lasso button
+        [305483] = "stun", -- Lightning Lasso
         [51485] = "root", -- Earthgrab Totem
     }
 

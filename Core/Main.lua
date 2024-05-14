@@ -41,18 +41,18 @@ do
     end
     AddOn.Initialize = Initialize
 
-    local function CcCasted(self, targetGUID, spellId, category)
+    local function CcCasted(self, victimGUID, spellId, category)
         local spellName = GetSpellInfo(spellId)
-        local unit = UnitTokenFromGUID(targetGUID)
+        local unit = UnitTokenFromGUID(victimGUID)
         
         -- nil unit means we couldn't find unit anywhere in nameplates, party, pets, target, raid, etc., see below:
         -- https://wowpedia.fandom.com/wiki/API_UnitTokenFromGUID
         if unit == nil then
             -- default estimated cc duration if we fail figuring it out exactly
-            local level = DrTracker:GetDrInfo(targetGUID, spellId)
+            local level = DrTracker:GetDrInfo(victimGUID, spellId)
             local diminishFactor = DrList:GetNextDR(level, category)
             local ccDuration = 6 * diminishFactor
-            DrTracker:AddDr(targetGUID, category, ccDuration)
+            DrTracker:AddDr(victimGUID, category, ccDuration)
             self:UpdateFramesForCategory(category)
             return
         end
@@ -68,14 +68,14 @@ do
             local _, _, _, _, duration = AuraUtil.FindAuraByName(spellName, unit, "HARMFUL")
             -- nil duration means someone's immuning the CC so dont extend it
             if duration == nil then return end
-            DrTracker:AddDr(targetGUID, category, duration)
+            DrTracker:AddDr(victimGUID, category, duration)
             self:UpdateFramesForCategory(category)
         end)
     end
     AddOn.CcCasted = CcCasted
 
-    local function CcRemoved(self, targetGUID, category)
-        DrTracker:ShortenDr(targetGUID, category)
+    local function CcRemoved(self, victimGUID, category)
+        DrTracker:ShortenDr(victimGUID, category)
         self:UpdateFramesForCategory(category)
     end
     AddOn.CcRemoved = CcRemoved

@@ -16,6 +16,7 @@ Core/DRs/DrTracker.lua
 Core/Frames/Ring.lua
 Core/Frames/Border.lua
 Core/Frames/FrameManager.lua
+Core/ButtonManager.lua
 Core/Main.lua
 Core/OptionsPanel.lua
 ActionBar_DRs.lua

@@ -5,6 +5,7 @@ local addonName, addon = ...
 
 local DrList = addon.DrListWrapper
 local AddOn = addon.AddOn
+local ButtonManager = addon.ButtonManager
 local OptionsPanel = addon.OptionsPanel
 local SlashCmdList = SlashCmdList
 local InterfaceOptionsFrame_OpenToCategory = InterfaceOptionsFrame_OpenToCategory
@@ -29,7 +30,7 @@ end)
 local f4 = CreateFrame("Frame")
 f4:RegisterEvent("PLAYER_ENTERING_WORLD")
 f4:SetScript("OnEvent", function(self, event)
-    AddOn:HookButtons()
+    AddOn:Initialize()
 end)
 
 local f3 = CreateFrame("Frame")

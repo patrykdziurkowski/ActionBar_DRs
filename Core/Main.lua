@@ -6,6 +6,7 @@ local addonName, addon = ...
 local DrList = addon.DrListWrapper
 local DrTracker = addon.DrTracker
 local FrameManager = addon.FrameManager
+local ButtonManager = addon.ButtonManager
 ABDRs_UserSettings = ABDRs_UserSettings
 
 
@@ -17,39 +18,26 @@ ABDRs_UserSettings = ABDRs_UserSettings
 local AddOn = {}
 addon.AddOn = AddOn
 do
-    -- public fields
-    AddOn.buttons = {}
-
     -- public methods
-    function AddOn:HookButtons() end
+    function AddOn:Initialize() end
     function AddOn:CcCasted(targetGUID, spellId, category) end
     function AddOn:CcRemoved(targetGUID, category) end
     function AddOn:UpdateFrames() end
 
     -- private methods
-    function AddOn:_HookBartender4Buttons() end
-    function AddOn:_HookElvUIButtons() end
-    function AddOn:_HookDefaultButtons() end
     function AddOn:_DisplayDrIndicators(targetGUID) end
     function AddOn:_HideDrIndicators() end
 
     ----------------------------------------------
     -- IMPLEMENTATIONS
     ----------------------------------------------
-    local function HookButtons(self)
-        if C_AddOns.IsAddOnLoaded("Bartender4") then
-            self:_HookBartender4Buttons()
-        elseif C_AddOns.IsAddOnLoaded("ElvUI") then
-            self:_HookElvUIButtons()
-        else
-            self:_HookDefaultButtons()
-        end
-
-        for _, button in pairs(self.buttons) do
+    local function Initialize(self)
+        ButtonManager:HookButtons()
+        ButtonManager:ForEachButton(function(button)
             button.ActionBar_DRs = FrameManager:New(button, ABDRs_UserSettings.size, ABDRs_UserSettings.color, ABDRs_UserSettings.alpha, ABDRs_UserSettings.texture.path)
-        end
+        end)
     end
-    AddOn.HookButtons = HookButtons
+    AddOn.Initialize = Initialize
 
     local function CcCasted(self, targetGUID, spellId, category)
         local spellName = GetSpellInfo(spellId)
@@ -100,7 +88,7 @@ do
 
     -- private
     local function _DisplayDrIndicators(self, targetGUID)
-        for _, button in pairs(self.buttons) do
+        ButtonManager:ForEachButton(function(button)
             local actionId = button:GetActionId()
             if actionId ~= nil then
                 local type, spellId, subtype = GetActionInfo(actionId)
@@ -113,77 +101,16 @@ do
                     end
                 end
             end
-        end
+        end)
     end
     AddOn._DisplayDrIndicators = _DisplayDrIndicators
 
     local function _HideDrIndicators(self)
-        for _, button in pairs(self.buttons) do
+        ButtonManager:ForEachButton(function(button)
             button.ActionBar_DRs:HideBorder()
-        end
+        end)
     end
     AddOn._HideDrIndicators = _HideDrIndicators
-
-    local function _HookBartender4Buttons(self)
-        for i = 1, 360 do 
-            local button = _G["BT4Button"..i]
-            if button ~= nil then
-                button.GetActionId = function(btn)
-                    if btn._state_action == nil then return -1 end
-                    return btn._state_action
-                end
-                table.insert(self.buttons, button)
-            end
-        end
-    end
-    AddOn._HookBartender4Buttons = _HookBartender4Buttons
-
-    local function _HookElvUIButtons(self)
-        for i = 1, 15 do
-            for j = 1, 12 do
-                local button = _G["ElvUI_Bar" .. i .. "Button" .. j]
-                if button ~= nil then
-                    button.GetActionId = function(btn)
-                        if btn._state_action == nil then return -1 end
-                        return btn._state_action
-                    end
-                    table.insert(self.buttons, button)
-                end
-            end
-        end
-    end
-    AddOn._HookElvUIButtons = _HookElvUIButtons
-
-    local function _HookDefaultButtons(self)
-        for i = 1, 12 do
-            if _G["ActionButton"..i] ~= nil then
-                table.insert(self.buttons, _G["ActionButton"..i])
-            end
-        end
-
-        -- keys are the <X> in various frames named MultiBar<X>
-        local keys = {5, 6, 7, "BottomLeft", "BottomRight", "Left", "Right"}
-        for _, key in pairs(keys) do
-            local barName = "MultiBar".. key
-            local bar = _G[barName]
-            if bar ~= nil then
-                for i = 1, 12 do
-                    local button = _G[barName .. "Button" .. i]
-                    if button ~= nil then
-                        table.insert(self.buttons, button)
-                    end
-                end
-            end
-        end
-
-        for _, button in pairs(self.buttons) do
-            button.GetActionId = function(btn)
-                if btn:GetPagedID() == nil then return -1 end
-                return btn:GetPagedID()
-            end
-        end
-    end
-    AddOn._HookDefaultButtons = _HookDefaultButtons
 end
 
 

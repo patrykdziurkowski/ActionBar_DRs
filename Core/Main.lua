@@ -22,7 +22,6 @@ do
 
     -- public methods
     function AddOn:HookButtons() end
-    function AddOn:ScanButtonsForCc() end
     function AddOn:CcCasted(targetGUID, spellId, category) end
     function AddOn:CcRemoved(targetGUID, category) end
     function AddOn:UpdateFrames() end

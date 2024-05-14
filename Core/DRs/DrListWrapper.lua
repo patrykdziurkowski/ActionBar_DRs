@@ -11,7 +11,6 @@ local DrListWrapper = {}
 addon.DrListWrapper = DrListWrapper
 do
     -- public methods
-    function DrListWrapper:CheckIfSpellCc(spellId) end
     function DrListWrapper:GetCategories() end
     function DrListWrapper:GetCategoryBySpellId(spellId) end
     function DrListWrapper:GetResetTime(category) end

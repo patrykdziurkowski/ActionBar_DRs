@@ -65,17 +65,14 @@ f:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 f:SetScript("OnEvent", function(self, event)
     local _, subevent, _, casterGUID, _, _, _, targetGUID, _, _, _, spellId, amount = CombatLogGetCurrentEventInfo()
 
-    if subevent == "SPELL_AURA_APPLIED" then
-        -- if category is nil then it's not a CC so we skip
-        local category = DrList:GetCategoryBySpellId(spellId)
-        if category == nil then return end
+    -- if category is nil then it's not a CC so we skip
+    local category = DrList:GetCategoryBySpellId(spellId)
+    if category == nil then return end
 
+    if subevent == "SPELL_AURA_APPLIED" then
         AddOn:CcCasted(targetGUID, spellId, category)
     -- when cc gets removed (i.e. it expires, gets trinketed, it breaks, etc.)
     elseif subevent == "SPELL_AURA_REMOVED" then
-        local category = DrList:GetCategoryBySpellId(spellId)
-        if category == nil then return end
-
         AddOn:CcRemoved(targetGUID, category)
     end
 end)

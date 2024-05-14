@@ -70,7 +70,7 @@ f:SetScript("OnEvent", function(self, event)
     local category = DrList:GetCategoryBySpellId(spellId)
     if category == nil then return end
 
-    if subevent == "SPELL_AURA_APPLIED" then
+    if subevent == "SPELL_AURA_APPLIED" or subevent == "SPELL_AURA_REFRESH" then
         AddOn:CcCasted(victimGUID, spellId, category)
     -- when cc gets removed (i.e. it expires, gets trinketed, it breaks, etc.)
     elseif subevent == "SPELL_AURA_REMOVED" then

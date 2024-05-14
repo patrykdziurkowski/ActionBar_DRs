@@ -141,7 +141,7 @@ do
 
     local function _GetButtonDrCategory(self, button)
         local type, id = GetActionInfo(button:GetActionId())
-        if type == "spell" then
+        if type == "spell" or type == "macro" then
             return DrList:GetCategoryBySpellId(id)
         end
         return nil

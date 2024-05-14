@@ -52,16 +52,6 @@ do
     end
     AddOn.HookButtons = HookButtons
 
-    local function ScanButtonsForCc(self)
-        for _, button in pairs(self.buttons) do
-            local type, id = GetActionInfo(button:GetActionId())
-            if type == "spell" then
-                DrList:CheckIfSpellCc(id)
-            end
-        end
-    end
-    AddOn.ScanButtonsForCc = ScanButtonsForCc
-
     local function CcCasted(self, targetGUID, spellId, category)
         local spellName = GetSpellInfo(spellId)
         local unit = UnitTokenFromGUID(targetGUID)

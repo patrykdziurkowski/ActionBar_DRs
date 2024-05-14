@@ -18,30 +18,14 @@ do
     function DrListWrapper:IsPvECategory(category) end
     function DrListWrapper:GetNextDR(diminished, category) end
 
-    function DrListWrapper:_GetCategoryKeywords() end
-
-    local extraTrackedCcSpells = {}
+    local extraTrackedCcSpells = {
+        [305483] = "stun", -- Lightning Lasso button
+        [51485] = "root", -- Earthgrab Totem
+    }
 
     ----------------------------------------------
     -- IMPLEMENTATIONS
     ----------------------------------------------
-    local function CheckIfSpellCc(self, spellId)
-        local category =  DrList:GetCategoryBySpellID(spellId)
-        if category ~= nil then return end
-
-        local spell = Spell:CreateFromSpellID(spellId)
-        spell:ContinueOnSpellLoad(function()
-            local description = spell:GetSpellDescription()
-
-            for category, keyword in pairs(self:_GetCategoryKeywords()) do
-                if string.find(description, keyword) then
-                    extraTrackedCcSpells[spellId] = category
-                end
-            end
-        end)
-    end
-    DrListWrapper.CheckIfSpellCc = CheckIfSpellCc
-    
     local function GetCategories(self)
         return DrList:GetCategories()
     end
@@ -68,16 +52,4 @@ do
         return DrList:GetNextDR(diminished, category)
     end
     DrListWrapper.GetNextDR = GetNextDR
-
-    local function _GetCategoryKeywords(self)
-        local categoryKeywords = {}
-        for categoryName, _ in pairs(self:GetCategories()) do
-            if categoryName ~= "knockback" then
-                categoryKeywords[categoryName] = categoryName
-            end
-        end
-
-        return categoryKeywords
-    end
-    DrListWrapper._GetCategoryKeywords = _GetCategoryKeywords
 end
